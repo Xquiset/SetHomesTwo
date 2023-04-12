@@ -1,0 +1,17 @@
+name: '${project.name}'
+version: '${project.version}'
+main: com.samleighton.sethomestwo.SetHomesTwo
+api-version: 1.19
+prefix: SH2
+authors: [Xquiset]
+description: '${project.description}'
+commands:
+  give-homes-item:
+    description: Give the player executing the command the home compass item.
+    permission: sethomestwo.give-homes-item
+  create-home:
+    description: Create a new home where you are currently standing.
+    permission: sethomestwo.create-home
+  delete-home:
+    description: Delete a home from your home list
+    permission: sethomestwo.delete-home

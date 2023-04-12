@@ -1,0 +1,98 @@
+package com.samleighton.sethomestwo.models;
+
+import org.bukkit.Location;
+
+import java.io.Serializable;
+import java.util.Objects;
+
+public class Home implements Serializable {
+
+    private String uuidBelongingTo;
+    private String name;
+    private String description;
+    private String world;
+    private double x;
+    private double y;
+    private double z;
+    private double pitch;
+    private double yaw;
+
+    public Home(String playerUUID, Location location, String name, String description){
+        setUUIDBelongingTo(playerUUID);
+        setWorld(Objects.requireNonNull(location.getWorld()).getUID().toString());
+        setX(location.getX());
+        setY(location.getY());
+        setZ(location.getZ());
+        setPitch(location.getPitch());
+        setYaw(location.getYaw());
+        setName(name);
+        setDescription(description);
+    }
+
+    public String getUUIDBelongingTo() {
+        return uuidBelongingTo;
+    }
+
+    public void setUUIDBelongingTo(String uuidBelongingTo) {
+        this.uuidBelongingTo = uuidBelongingTo;
+    }
+
+    public String getWorld() { return world; }
+
+    public void setWorld(String world) { this.world = world; }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public double getZ() {
+        return z;
+    }
+
+    public void setZ(double z) {
+        this.z = z;
+    }
+
+    public double getPitch() {
+        return pitch;
+    }
+
+    public void setPitch(double pitch) {
+        this.pitch = pitch;
+    }
+
+    public double getYaw() {
+        return yaw;
+    }
+
+    public void setYaw(double yaw) {
+        this.yaw = yaw;
+    }
+}
