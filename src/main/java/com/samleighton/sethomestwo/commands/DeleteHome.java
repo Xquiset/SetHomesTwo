@@ -6,10 +6,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class DeleteHome implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String[] args) {
         if(!(commandSender instanceof Player)) return false;
 
         Player player = (Player) commandSender;
@@ -25,10 +26,9 @@ public class DeleteHome implements CommandExecutor {
         String playerUUID = player.getUniqueId().toString();
 
         HomesConnection homesConnection = new HomesConnection();
-        homesConnection.deleteHome(playerUUID, homeName);
+        boolean success = homesConnection.deleteHome(playerUUID, homeName);
 
-        ChatUtils.sendSuccess(player, String.format("%s has been deleted successfully.", homeName));
-
+        if(success) ChatUtils.sendSuccess(player, String.format("%s has been deleted successfully.", homeName));
         return false;
     }
 }

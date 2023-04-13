@@ -1,8 +1,13 @@
 package com.samleighton.sethomestwo.gui;
 
+import com.samleighton.sethomestwo.SetHomesTwo;
+import com.samleighton.sethomestwo.datatypes.PersistentHome;
 import com.samleighton.sethomestwo.models.Home;
+import com.samleighton.sethomestwo.utils.ChatUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,8 +17,9 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,12 +36,12 @@ public class HomesGui implements Listener {
     public void initItems(List<Home> homes) {
         inv.clear();
 
-        if(homes.size() < 1) return;
+        if (homes.size() < 1) return;
 
-        for(Home home : homes){
+        for (Home home : homes) {
             String materialName = home.getMaterial();
             Material material = Material.matchMaterial(materialName);
-            inv.addItem(createGuiItem(material, home.getName(), home.getDescription()));
+            inv.addItem(createGuiItem(material, home));
         }
     }
 
@@ -43,17 +49,20 @@ public class HomesGui implements Listener {
      * Create a new item to be placed in the inventory.
      *
      * @param mat,  The material of the item
-     * @param name, The name for the item
-     * @param lore, The lore for the item
+     * @param home, The home designated for this item
      * @return ItemStack
      */
-    protected ItemStack createGuiItem(final Material mat, final String name, final String... lore) {
+    protected ItemStack createGuiItem(final Material mat, Home home) {
         ItemStack item = new ItemStack(mat, 1);
         ItemMeta meta = item.getItemMeta();
 
         // Setup item lore and display name
-        Objects.requireNonNull(meta).setDisplayName(name);
-        Objects.requireNonNull(meta).setLore(Arrays.asList(lore));
+        Objects.requireNonNull(meta).setDisplayName(home.getName());
+        Objects.requireNonNull(meta).setLore(Collections.singletonList(home.getDescription()));
+
+        // Persist the home to the item
+        NamespacedKey homeKey = new NamespacedKey(SetHomesTwo.getPlugin(SetHomesTwo.class), "home");
+        meta.getPersistentDataContainer().set(homeKey, new PersistentHome(), home);
 
         // Apply item meta
         item.setItemMeta(meta);
@@ -80,11 +89,38 @@ public class HomesGui implements Listener {
 
         ItemStack clickedItem = event.getCurrentItem();
         // Guard for user actually clicking item.
-        if (clickedItem == null || clickedItem.getType().isAir()) return;
+        if (clickedItem == null || clickedItem.getType().isAir() || clickedItem.getItemMeta() == null) return;
+
+        ItemMeta clickedItemMeta = clickedItem.getItemMeta();
+        NamespacedKey homeKey = new NamespacedKey(SetHomesTwo.getPlugin(SetHomesTwo.class), "home");
+
+        // Guard to check if item is actually home destination
+        if (!clickedItem.getItemMeta().getPersistentDataContainer().has(homeKey, new PersistentHome())) return;
 
         // Get the player who clicked the item.
-        Player p = (Player) event.getWhoClicked();
-        p.sendMessage("You clicked slot " + event.getRawSlot());
+        final Player player = (Player) event.getWhoClicked();
+        Home home = clickedItemMeta.getPersistentDataContainer().get(homeKey, new PersistentHome());
+
+        // close the inventory
+        player.closeInventory();
+
+        // Send player countdown title.
+        Plugin plugin = SetHomesTwo.getPlugin(SetHomesTwo.class);
+        int[] seconds = {3};
+        plugin.getServer().getScheduler().runTaskTimer(plugin, bukkitTask -> {
+            // This logic repeats until the time has expired.
+            if(seconds[0] > 0) {
+                player.sendTitle(ChatColor.GOLD + "Please stand still", String.format("You will be teleported in %d...", seconds[0]), 0, 999, 0);
+                seconds[0]--;
+                return;
+            }
+
+            assert home != null;
+            player.teleport(home.asLocation());
+            player.resetTitle();
+            ChatUtils.sendSuccess(player, String.format("Teleported to %s", home.getName()));
+            bukkitTask.cancel();
+        }, 0, 20L);
     }
 
     // Cancel inventory dragging

@@ -55,7 +55,8 @@ public class HomesConnection {
      * @return boolean
      */
     public boolean createNewHome(String playerUUID, String material, Location playerLocation, String name, String description) {
-        material = material == null ? Material.WHITE_WOOL.name() : material;
+        boolean isBlankOrDefault = material == null || material.equalsIgnoreCase("d") || material.equalsIgnoreCase("default");
+        material = isBlankOrDefault ? Material.WHITE_WOOL.name() : material;
         Home home = new Home(playerUUID, material, playerLocation, name, description);
         String sql = "insert into players_homes (player_uuid, world, material, name, description, x, y, z, pitch, yaw) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         return DatabaseUtil.execute(
@@ -74,6 +75,12 @@ public class HomesConnection {
         );
     }
 
+    /**
+     * Retrieve a list of the players current homes from the database.
+     *
+     * @param playerUUID, The player uuid to retrieve homes for
+     * @return List<Home>
+     */
     public List<Home> getPlayersHomes(String playerUUID) {
         List<Home> playerHomes = new ArrayList<>();
 
@@ -109,7 +116,14 @@ public class HomesConnection {
         return playerHomes;
     }
 
-    public boolean deleteHome(String playerUUID, String homeName){
+    /**
+     * Delete the home from the database.
+     *
+     * @param playerUUID, The player uuid who owns the home
+     * @param homeName,   The home name to delete
+     * @return boolean
+     */
+    public boolean deleteHome(String playerUUID, String homeName) {
         String sql = "delete from players_homes where player_uuid = ? and name = ?";
         return DatabaseUtil.execute(db, sql, playerUUID, homeName);
     }

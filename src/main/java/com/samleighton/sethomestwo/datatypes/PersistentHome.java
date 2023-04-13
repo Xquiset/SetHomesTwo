@@ -1,6 +1,10 @@
 package com.samleighton.sethomestwo.datatypes;
 
+import com.samleighton.sethomestwo.models.Home;
 import org.apache.commons.lang.SerializationUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
@@ -9,35 +13,34 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.util.Arrays;
 
-public class PersistentString implements PersistentDataType<byte[], String> {
+public class PersistentHome implements PersistentDataType<byte[], Home> {
     @Override
     public @NotNull Class<byte[]> getPrimitiveType() {
         return byte[].class;
     }
 
     @Override
-    public @NotNull Class<String> getComplexType() {
-        return String.class;
+    public @NotNull Class<Home> getComplexType() {
+        return Home.class;
     }
 
     @Override
-    public byte @NotNull [] toPrimitive(@NotNull String s, @NotNull PersistentDataAdapterContext persistentDataAdapterContext) {
-        return SerializationUtils.serialize(s);
+    public byte @NotNull [] toPrimitive(@NotNull Home home, @NotNull PersistentDataAdapterContext persistentDataAdapterContext) {
+        return SerializationUtils.serialize(home);
     }
 
     @Override
-    public @NotNull String fromPrimitive(byte @NotNull [] bytes, @NotNull PersistentDataAdapterContext persistentDataAdapterContext) {
+    public @NotNull Home fromPrimitive(byte @NotNull [] bytes, @NotNull PersistentDataAdapterContext persistentDataAdapterContext) {
         try {
             InputStream is = new ByteArrayInputStream(bytes);
             ObjectInputStream ois = new ObjectInputStream(is);
 
-            return (String) ois.readObject();
+            return (Home) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
-        return Arrays.toString(new byte[0]);
+        return new Home("", Material.WHITE_WOOL.name(), new Location(Bukkit.getWorlds().get(0), 0, 0, 0, 0.0f, 0.0f), "", "");
     }
 }

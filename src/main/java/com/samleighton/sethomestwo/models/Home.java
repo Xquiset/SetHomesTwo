@@ -1,10 +1,11 @@
 package com.samleighton.sethomestwo.models;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Home implements Serializable {
 
@@ -16,8 +17,8 @@ public class Home implements Serializable {
     private double x;
     private double y;
     private double z;
-    private double pitch;
-    private double yaw;
+    private float pitch;
+    private float yaw;
 
     public Home(String playerUUID, String material, Location location, String name, String description){
         setUUIDBelongingTo(playerUUID);
@@ -87,19 +88,30 @@ public class Home implements Serializable {
         this.z = z;
     }
 
-    public double getPitch() {
+    public float getPitch() {
         return pitch;
     }
 
-    public void setPitch(double pitch) {
+    public void setPitch(float pitch) {
         this.pitch = pitch;
     }
 
-    public double getYaw() {
+    public float getYaw() {
         return yaw;
     }
 
-    public void setYaw(double yaw) {
+    public void setYaw(float yaw) {
         this.yaw = yaw;
+    }
+
+    public Location asLocation(){
+        return new Location(
+            Bukkit.getWorld(UUID.fromString(getWorld())),
+            getX(),
+            getY(),
+            getZ(),
+            getYaw(),
+            getPitch()
+        );
     }
 }

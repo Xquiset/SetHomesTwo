@@ -3,7 +3,6 @@ package com.samleighton.sethomestwo.utils;
 import org.bukkit.Bukkit;
 
 import java.sql.*;
-import java.util.Arrays;
 
 public class DatabaseUtil {
 
@@ -59,17 +58,14 @@ public class DatabaseUtil {
      * @param params,    The parameters to bind
      */
     public static void setParams(PreparedStatement statement, Object... params) {
-        if(params.length == 0) return;
-
-        Bukkit.getLogger().info("STMT: " + statement.toString());
-        Bukkit.getLogger().info("PARAMS: " + Arrays.toString(params));
+        if (params.length == 0) return;
 
         try {
             for (int i = 0; i < params.length; i++) {
                 Object param = params[i];
                 int paramIndex = i + 1;
 
-                if(param == null) {
+                if (param == null) {
                     statement.setNull(paramIndex, Types.NULL);
                 }
 
@@ -84,10 +80,15 @@ public class DatabaseUtil {
                 if (param instanceof Double) {
                     statement.setDouble(paramIndex, (double) param);
                 }
+
+                if (param instanceof Float) {
+                    statement.setFloat(paramIndex, (float) param);
+                }
             }
+
+            Bukkit.getLogger().info("STMT: " + statement.toString());
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 }

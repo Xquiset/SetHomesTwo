@@ -4,10 +4,12 @@ import com.samleighton.sethomestwo.connections.HomesConnection;
 import com.samleighton.sethomestwo.utils.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -18,7 +20,7 @@ public class CreateHome implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String[] args) {
         if (!(commandSender instanceof Player)) return false;
 
         Player player = (Player) commandSender;
@@ -27,16 +29,23 @@ public class CreateHome implements CommandExecutor {
         // Args length guard
         if (args.length < 1) {
             ChatUtils.notEnoughArguments(player);
-            ChatUtils.sendInfo(player, "Usage: /create-home [name] [description]");
+            ChatUtils.sendInfo(player, "Usage: /create-home [name] [display_material] [description]");
             return false;
         }
 
         // Extract parameters from command arguments
         String homeName = args[0];
 
-        String material = null;
+        String material = "";
         if(args.length > 1)
             material = args[1];
+
+        // Check material entered is a valid material
+        Material mat = Material.matchMaterial(material);
+        if(mat == null) {
+            ChatUtils.sendError(player, "The material you entered is not valid, please try a different one.");
+            return false;
+        }
 
         String description = null;
         StringBuilder stringBuilder = new StringBuilder();
