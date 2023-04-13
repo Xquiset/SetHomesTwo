@@ -5,6 +5,7 @@ import com.samleighton.sethomestwo.models.Home;
 import com.samleighton.sethomestwo.utils.DatabaseUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -30,6 +31,7 @@ public class HomesConnection {
         String createSQL = "create table if not exists players_homes (\n" +
                 "id integer PRIMARY KEY, \n" +
                 "player_uuid TEXT NOT NULL, \n" +
+                "material TEXT NOT NULL, \n" +
                 "world TEXT NOT NULL, \n" +
                 "name TEXT NOT NULL, \n" +
                 "description TEXT, \n" +
@@ -37,7 +39,8 @@ public class HomesConnection {
                 "y real NOT NULL, \n" +
                 "z real NOT NULL, \n" +
                 "pitch real NOT NULL, \n" +
-                "yaw real NOT NULL );";
+                "yaw real NOT NULL " +
+                ");";
         DatabaseUtil.execute(db, createSQL);
     }
 
@@ -51,14 +54,16 @@ public class HomesConnection {
      * @param description,    The players description of the home.
      * @return boolean
      */
-    public boolean createNewHome(String playerUUID, Location playerLocation, String name, String description) {
-        Home home = new Home(playerUUID, playerLocation, name, description);
-        String sql = "insert into players_homes (player_uuid, world, name, description, x, y, z, pitch, yaw) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    public boolean createNewHome(String playerUUID, String material, Location playerLocation, String name, String description) {
+        material = material == null ? Material.WHITE_WOOL.name() : material;
+        Home home = new Home(playerUUID, material, playerLocation, name, description);
+        String sql = "insert into players_homes (player_uuid, world, material, name, description, x, y, z, pitch, yaw) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         return DatabaseUtil.execute(
                 db,
                 sql,
                 home.getUUIDBelongingTo(),
                 home.getWorld(),
+                home.getMaterial(),
                 home.getName(),
                 home.getDescription(),
                 home.getX(),
@@ -89,6 +94,7 @@ public class HomesConnection {
                 );
                 Home home = new Home(
                         rs.getString("player_uuid"),
+                        rs.getString("material"),
                         homeLocation,
                         rs.getString("name"),
                         rs.getString("description")

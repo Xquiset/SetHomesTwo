@@ -33,7 +33,9 @@ public class HomesGui implements Listener {
         if(homes.size() < 1) return;
 
         for(Home home : homes){
-            inv.addItem(createGuiItem(Material.WHITE_WOOL, home.getName(), home.getDescription()));
+            String materialName = home.getMaterial();
+            Material material = Material.matchMaterial(materialName);
+            inv.addItem(createGuiItem(material, home.getName(), home.getDescription()));
         }
     }
 

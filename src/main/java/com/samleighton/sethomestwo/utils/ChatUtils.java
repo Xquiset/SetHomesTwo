@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class ChatUtils {
-    private static String prefix = ChatColor.GOLD + "[SH2]" + ChatColor.RESET + " ";
+    private static final String prefix = ChatColor.GOLD + "[SH2]" + ChatColor.RESET + " ";
     public static void sendInfo(Player player, String msg){
         player.sendMessage(prefix + msg);
     }

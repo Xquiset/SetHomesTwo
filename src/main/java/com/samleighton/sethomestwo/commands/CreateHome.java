@@ -33,12 +33,17 @@ public class CreateHome implements CommandExecutor {
 
         // Extract parameters from command arguments
         String homeName = args[0];
+
+        String material = null;
+        if(args.length > 1)
+            material = args[1];
+
         String description = null;
         StringBuilder stringBuilder = new StringBuilder();
 
         // Build description from leftover arguments
-        if (args.length > 1) {
-            String[] remainingArgs = Arrays.copyOfRange(args, 1, args.length);
+        if (args.length > 2) {
+            String[] remainingArgs = Arrays.copyOfRange(args, 2, args.length);
             for (int i = 0; i < remainingArgs.length; i++) {
                 String arg = remainingArgs[i];
                 if (i == remainingArgs.length - 1) {
@@ -53,7 +58,7 @@ public class CreateHome implements CommandExecutor {
 
         // Create the home
         HomesConnection homesConnection = new HomesConnection();
-        boolean created = homesConnection.createNewHome(player.getUniqueId().toString(), playerLocation, homeName, description);
+        boolean created = homesConnection.createNewHome(player.getUniqueId().toString(), material, playerLocation, homeName, description);
 
         if (!created) {
             Bukkit.getLogger().warning("Could not create home for player " + player.getUniqueId());
