@@ -1,6 +1,7 @@
 package com.samleighton.sethomestwo.datatypes;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +36,7 @@ public class PersistentString implements PersistentDataType<byte[], String> {
 
             return (String) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
+            Bukkit.getLogger().severe("There was an issue deserializing a string.");
             e.printStackTrace();
         }
 

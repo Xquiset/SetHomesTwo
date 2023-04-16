@@ -6,13 +6,13 @@ public abstract class AbstractConnection {
 
     private final Connection db;
 
-    public AbstractConnection(Connection db){
+    public AbstractConnection(Connection db) {
         this.db = db;
     }
 
     public abstract void init();
 
-    protected Connection conn(){
+    protected Connection conn() {
         return this.db;
     }
 }

@@ -2,6 +2,7 @@ package com.samleighton.sethomestwo.items;
 
 import com.samleighton.sethomestwo.SetHomesTwo;
 import com.samleighton.sethomestwo.datatypes.PersistentString;
+import com.samleighton.sethomestwo.utils.ConfigUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -19,7 +20,7 @@ public class HomeItem extends ItemStack implements Serializable {
 
     public HomeItem(Player player) {
         // Instantiate the base item
-        super(Material.COMPASS, 1);
+        super(Objects.requireNonNull(Material.matchMaterial(ConfigUtil.getConfig().getString("openHomeItem", "white_wool"))), 1);
 
         // Setup item UUID and player
         setHomeItemUUID(UUID.randomUUID());
@@ -27,10 +28,12 @@ public class HomeItem extends ItemStack implements Serializable {
 
         // Setup Item meta
         ItemMeta initItemMeta = this.getItemMeta();
-        Objects.requireNonNull(initItemMeta).setDisplayName(String.format("Home's of %s", player.getDisplayName()));
+        String itemDisplayName = ConfigUtil.getConfig().getString("homeItemName", "Home's of %s");
+        Objects.requireNonNull(initItemMeta).setDisplayName(String.format(itemDisplayName, player.getDisplayName()));
 
         // Setup item lore
-        List<String> baseLore = new ArrayList<>(Collections.singletonList("Right click this item to open your home's list."));
+        String itemLore = ConfigUtil.getConfig().getString("homeItemLore", "Right click this item to open your home's list.");
+        List<String> baseLore = new ArrayList<>(Collections.singletonList(itemLore));
         Objects.requireNonNull(initItemMeta).setLore(baseLore);
 
         // Setup persistent data

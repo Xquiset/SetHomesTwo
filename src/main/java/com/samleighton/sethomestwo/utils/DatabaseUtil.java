@@ -1,5 +1,6 @@
 package com.samleighton.sethomestwo.utils;
 
+import com.samleighton.sethomestwo.enums.DebugLevel;
 import org.bukkit.Bukkit;
 
 import java.sql.*;
@@ -17,13 +18,12 @@ public class DatabaseUtil {
     public static boolean execute(Connection connection, String sql, Object... params) {
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
-
             // Set optional params and execute
             setParams(statement, params);
             statement.execute();
             return true;
         } catch (SQLException e) {
-            Bukkit.getLogger().warning("Could not execute sql statement.");
+            Bukkit.getLogger().severe("Could not execute sql statement.");
             e.printStackTrace();
         }
 
@@ -45,7 +45,8 @@ public class DatabaseUtil {
 
             return statement.executeQuery();
         } catch (SQLException e) {
-            Bukkit.getLogger().warning("Could not execute sql statement.");
+            Bukkit.getLogger().severe("Could not execute sql statement.");
+            e.printStackTrace();
         }
 
         return null;
@@ -86,7 +87,8 @@ public class DatabaseUtil {
                 }
             }
 
-            Bukkit.getLogger().info("STMT: " + statement.toString());
+            if (ConfigUtil.getDebugLevel().equals(DebugLevel.INFO))
+                Bukkit.getLogger().info("STMT: " + statement.toString());
         } catch (SQLException e) {
             e.printStackTrace();
         }

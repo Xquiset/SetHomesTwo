@@ -38,6 +38,7 @@ public class PersistentHome implements PersistentDataType<byte[], Home> {
 
             return (Home) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
+            Bukkit.getLogger().severe("There was a problem deserializing a home.");
             e.printStackTrace();
         }
 

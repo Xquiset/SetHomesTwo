@@ -1,0 +1,17 @@
+package com.samleighton.sethomestwo.enums;
+
+public enum UserSuccess {
+    HOME_CREATED("%s has been created successfully."),
+    HOME_DELETED("%s has been deleted successfully."),
+    TELEPORTED("Teleported to %s");
+
+    private final String value;
+
+    UserSuccess(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
+}

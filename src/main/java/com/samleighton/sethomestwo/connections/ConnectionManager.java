@@ -1,6 +1,7 @@
 package com.samleighton.sethomestwo.connections;
 
 import com.samleighton.sethomestwo.SetHomesTwo;
+import org.bukkit.Bukkit;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,15 +13,15 @@ public class ConnectionManager {
     private final Map<String, Connection> activeConnections;
 
     public ConnectionManager() {
-        this.activeConnections = new HashMap<>();
+        activeConnections = new HashMap<>();
     }
 
     public Connection getConnection(String key) {
-        return this.activeConnections.get(key);
+        return activeConnections.get(key);
     }
 
     public void addConnection(String key, Connection connection) {
-        this.activeConnections.put(key, connection);
+        activeConnections.put(key, connection);
     }
 
     public boolean createConnection(String key, String dbName) {
@@ -29,9 +30,10 @@ public class ConnectionManager {
 
         try {
             Connection connection = DriverManager.getConnection(dbURL);
-            this.addConnection(key, connection);
+            addConnection(key, connection);
             return true;
         } catch (SQLException e) {
+            Bukkit.getLogger().severe(String.format("There was an issue creating the database %s", dbName));
             e.printStackTrace();
         }
 
@@ -42,12 +44,13 @@ public class ConnectionManager {
      * Close all active connections
      */
     public void closeConnections() {
-        for (Connection conn : this.activeConnections.values()) {
+        for (Connection conn : activeConnections.values()) {
             if (conn == null) continue;
 
             try {
                 conn.close();
             } catch (SQLException e) {
+                Bukkit.getLogger().severe("There was an issue closing a database connection.");
                 e.printStackTrace();
             }
         }
