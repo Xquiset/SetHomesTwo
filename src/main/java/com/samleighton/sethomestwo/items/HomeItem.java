@@ -44,7 +44,7 @@ public class HomeItem extends ItemStack implements Serializable {
         this.setItemMeta(initItemMeta);
     }
 
-    public UUID getHomeUUID() {
+    protected UUID getHomeUUID() {
         return homeItemUUID;
     }
 

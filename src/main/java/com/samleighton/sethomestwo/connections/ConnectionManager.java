@@ -11,7 +11,7 @@ import java.util.Map;
 public class ConnectionManager {
     private final Map<String, Connection> activeConnections;
 
-    public ConnectionManager(){
+    public ConnectionManager() {
         this.activeConnections = new HashMap<>();
     }
 
@@ -19,13 +19,13 @@ public class ConnectionManager {
         return this.activeConnections.get(key);
     }
 
-    public void addConnection(String key, Connection connection){
+    public void addConnection(String key, Connection connection) {
         this.activeConnections.put(key, connection);
     }
 
-    public boolean createConnection(String key, String dbName){
+    public boolean createConnection(String key, String dbName) {
         SetHomesTwo plugin = SetHomesTwo.getPlugin(SetHomesTwo.class);
-        String dbURL = "jdbc:sqlite:" + plugin.getDataFolder().getAbsolutePath() + "/databases/" + dbName + ".db";
+        String dbURL = "jdbc:sqlite:" + plugin.getDataFolder().getAbsolutePath() + "/database/" + dbName + ".db";
 
         try {
             Connection connection = DriverManager.getConnection(dbURL);
@@ -41,9 +41,9 @@ public class ConnectionManager {
     /**
      * Close all active connections
      */
-    public void closeConnections(){
-        for(Connection conn : this.activeConnections.values()) {
-            if(conn == null) continue;
+    public void closeConnections() {
+        for (Connection conn : this.activeConnections.values()) {
+            if (conn == null) continue;
 
             try {
                 conn.close();

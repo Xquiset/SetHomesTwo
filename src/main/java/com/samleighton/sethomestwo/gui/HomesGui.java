@@ -1,8 +1,10 @@
 package com.samleighton.sethomestwo.gui;
 
 import com.samleighton.sethomestwo.SetHomesTwo;
+import com.samleighton.sethomestwo.connections.TeleportationAttemptsConnection;
 import com.samleighton.sethomestwo.datatypes.PersistentHome;
 import com.samleighton.sethomestwo.models.Home;
+import com.samleighton.sethomestwo.models.TeleportAttempt;
 import com.samleighton.sethomestwo.utils.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -98,16 +100,42 @@ public class HomesGui implements Listener {
         if (!clickedItem.getItemMeta().getPersistentDataContainer().has(homeKey, new PersistentHome())) return;
 
         // Get the player who clicked the item.
-        final Player player = (Player) event.getWhoClicked();
+        Player player = (Player) event.getWhoClicked();
+        TeleportationAttemptsConnection tac = new TeleportationAttemptsConnection();
+        boolean hasAttempt = tac.getLastAttempt(player) != null;
+
+        // Guard to check if player is currently teleporting
+        if(hasAttempt) {
+            ChatUtils.sendError(player, "You cannot teleport while already teleporting.");
+            return;
+        }
+
+        // Get the home from the clicked item
         Home home = clickedItemMeta.getPersistentDataContainer().get(homeKey, new PersistentHome());
 
         // close the inventory
         player.closeInventory();
 
+        // Track player teleport attempt
+        tac.createAttempt(new TeleportAttempt(player, player.getLocation()));
+
         // Send player countdown title.
         Plugin plugin = SetHomesTwo.getPlugin(SetHomesTwo.class);
         int[] seconds = {3};
+        // Schedule repeating task for every second
         plugin.getServer().getScheduler().runTaskTimer(plugin, bukkitTask -> {
+            // Guard if the player has moved
+            TeleportAttempt currAttempt = tac.getLastAttempt(player);
+            if(currAttempt != null) {
+                if(!currAttempt.canTeleport()){
+                    ChatUtils.sendError(player, "Teleport has been cancelled because you have moved.");
+                    tac.removeAttempt(player);
+                    player.resetTitle();
+                    bukkitTask.cancel();
+                    return;
+                }
+            }
+
             // This logic repeats until the time has expired.
             if(seconds[0] > 0) {
                 player.sendTitle(ChatColor.GOLD + "Please stand still", String.format("You will be teleported in %d...", seconds[0]), 0, 999, 0);
@@ -115,9 +143,11 @@ public class HomesGui implements Listener {
                 return;
             }
 
+            // This logic fires after total seconds have elapsed
             assert home != null;
             player.teleport(home.asLocation());
             player.resetTitle();
+            tac.removeAttempt(player);
             ChatUtils.sendSuccess(player, String.format("Teleported to %s", home.getName()));
             bukkitTask.cancel();
         }, 0, 20L);

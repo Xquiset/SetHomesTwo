@@ -5,6 +5,8 @@ import com.samleighton.sethomestwo.commands.DeleteHome;
 import com.samleighton.sethomestwo.commands.GiveHomesItem;
 import com.samleighton.sethomestwo.connections.ConnectionManager;
 import com.samleighton.sethomestwo.connections.HomesConnection;
+import com.samleighton.sethomestwo.connections.TeleportationAttemptsConnection;
+import com.samleighton.sethomestwo.events.PlayerMoveWhileTeleporting;
 import com.samleighton.sethomestwo.events.RightClickHomeItem;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,7 +30,8 @@ public final class SetHomesTwo extends JavaPlugin {
         boolean success = connectionManager.createConnection("homes", "homes");
         if (success){
             Bukkit.getLogger().info("Homes database connection was successful.");
-            (new HomesConnection()).init();
+            new HomesConnection().init();
+            new TeleportationAttemptsConnection().init();
         }
     }
 
@@ -53,6 +56,7 @@ public final class SetHomesTwo extends JavaPlugin {
      */
     public void registerEventListeners() {
         getServer().getPluginManager().registerEvents(new RightClickHomeItem(), this);
+        getServer().getPluginManager().registerEvents(new PlayerMoveWhileTeleporting(), this);
     }
 
     /**
@@ -66,7 +70,7 @@ public final class SetHomesTwo extends JavaPlugin {
                 Bukkit.getLogger().warning("Could not create plugin folder.");
         }
 
-        File databasesDir = new File(getDataFolder().getAbsolutePath() + "/databases");
+        File databasesDir = new File(getDataFolder().getAbsolutePath() + "/database");
         if (!databasesDir.exists()) {
             boolean success = databasesDir.mkdir();
             if(!success)

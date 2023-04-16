@@ -7,28 +7,26 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class HomesConnection {
-
-    private final Connection db;
+public class HomesConnection extends AbstractConnection{
 
     public HomesConnection() {
-        db = SetHomesTwo.getPlugin(SetHomesTwo.class).getConnectionManager().getConnection("homes");
+        super(SetHomesTwo.getPlugin(SetHomesTwo.class).getConnectionManager().getConnection("homes"));
     }
 
     /**
      * Create the homes table if it does not exist.
      */
     public void init() {
-        if (db == null) return;
+        if (this.conn() == null) return;
 
-        String createSQL = "create table if not exists players_homes (\n" +
+        // Create players_homes table
+        String createPlayersHomesSQL = "create table if not exists players_homes (\n" +
                 "id integer PRIMARY KEY, \n" +
                 "player_uuid TEXT NOT NULL, \n" +
                 "material TEXT NOT NULL, \n" +
@@ -41,7 +39,7 @@ public class HomesConnection {
                 "pitch real NOT NULL, \n" +
                 "yaw real NOT NULL " +
                 ");";
-        DatabaseUtil.execute(db, createSQL);
+        DatabaseUtil.execute(this.conn(), createPlayersHomesSQL);
     }
 
 
@@ -60,7 +58,7 @@ public class HomesConnection {
         Home home = new Home(playerUUID, material, playerLocation, name, description);
         String sql = "insert into players_homes (player_uuid, world, material, name, description, x, y, z, pitch, yaw) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         return DatabaseUtil.execute(
-                db,
+                this.conn(),
                 sql,
                 home.getUUIDBelongingTo(),
                 home.getWorld(),
@@ -85,7 +83,7 @@ public class HomesConnection {
         List<Home> playerHomes = new ArrayList<>();
 
         String sql = "select * from players_homes where player_uuid = ?";
-        ResultSet rs = DatabaseUtil.fetch(db, sql, playerUUID);
+        ResultSet rs = DatabaseUtil.fetch(this.conn(), sql, playerUUID);
 
         if (rs == null) return playerHomes;
 
@@ -125,6 +123,6 @@ public class HomesConnection {
      */
     public boolean deleteHome(String playerUUID, String homeName) {
         String sql = "delete from players_homes where player_uuid = ? and name = ?";
-        return DatabaseUtil.execute(db, sql, playerUUID, homeName);
+        return DatabaseUtil.execute(this.conn(), sql, playerUUID, homeName);
     }
 }
