@@ -20,7 +20,7 @@ public class Home implements Serializable {
     private float pitch;
     private float yaw;
 
-    public Home(String playerUUID, String material, Location location, String name, String description){
+    public Home(String playerUUID, String material, Location location, String name, String description) {
         setUUIDBelongingTo(playerUUID);
         setMaterial(material);
         setWorld(Objects.requireNonNull(location.getWorld()).getUID().toString());
@@ -41,13 +41,22 @@ public class Home implements Serializable {
         this.uuidBelongingTo = uuidBelongingTo;
     }
 
-    public String getMaterial() { return material; }
+    public String getMaterial() {
+        return material;
+    }
 
-    public void setMaterial(String material) { this.material = material; }
+    public void setMaterial(String material) {
+        this.material = material;
+    }
 
-    public String getWorld() { return world; }
+    public String getWorld() {
+        return world;
+    }
 
-    public void setWorld(String world) { this.world = world; }
+    public void setWorld(String world) {
+        this.world = world;
+    }
+
     public String getName() {
         return name;
     }
@@ -104,14 +113,14 @@ public class Home implements Serializable {
         this.yaw = yaw;
     }
 
-    public Location asLocation(){
+    public Location asLocation() {
         return new Location(
-            Bukkit.getWorld(UUID.fromString(getWorld())),
-            getX(),
-            getY(),
-            getZ(),
-            getYaw(),
-            getPitch()
+                Bukkit.getWorld(UUID.fromString(getWorld())),
+                getX(),
+                getY(),
+                getZ(),
+                getYaw(),
+                getPitch()
         );
     }
 }

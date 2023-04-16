@@ -2,10 +2,12 @@ package com.samleighton.sethomestwo.connections;
 
 import com.samleighton.sethomestwo.SetHomesTwo;
 import com.samleighton.sethomestwo.models.TeleportAttempt;
+import com.samleighton.sethomestwo.utils.ConfigUtil;
 import com.samleighton.sethomestwo.utils.DatabaseUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,11 +41,10 @@ public class TeleportationAttemptsConnection extends AbstractConnection {
      * Create a new attempt in the table.
      *
      * @param teleportAttempt, The teleport attempt to create
-     * @return boolean
      */
-    public boolean createAttempt(TeleportAttempt teleportAttempt) {
+    public void createAttempt(@NotNull TeleportAttempt teleportAttempt) {
         String sql = "insert into %s (player_uuid, world, x, y, z) VALUES (?, ?, ?, ?, ?);";
-        return DatabaseUtil.execute(
+        DatabaseUtil.execute(
                 this.conn(),
                 String.format(sql, tableName),
                 teleportAttempt.getPlayer().getUniqueId().toString(),
@@ -60,9 +61,9 @@ public class TeleportationAttemptsConnection extends AbstractConnection {
      * @param player, The player to retrieve the attempt for
      * @return Timestamp[], first element is the started at time, second element is the last moved time
      */
-    public TeleportAttempt getLastAttempt(Player player) {
-        String sql = String.format("select * from %s where player_uuid = ?", tableName);
-        ResultSet rs = DatabaseUtil.fetch(this.conn(), sql, player.getUniqueId().toString());
+    public TeleportAttempt getLastAttempt(@NotNull Player player) {
+        String sql = "select * from %s where player_uuid = ?";
+        ResultSet rs = DatabaseUtil.fetch(this.conn(), String.format(sql, tableName), player.getUniqueId().toString());
 
         // Guard to check if received a result set
         if (rs == null) return null;
@@ -88,12 +89,16 @@ public class TeleportationAttemptsConnection extends AbstractConnection {
             Location teleportStart = ta.getLocation();
             Location currLocation = player.getLocation();
 
-            // Guard to check if player has moved
-            if(teleportStart.getX() != currLocation.getX() || teleportStart.getY() != currLocation.getY() || teleportStart.getZ() != currLocation.getZ())
+            // Skip cancel on move check
+            if (!ConfigUtil.getConfig().getBoolean("cancelOnMove", true)) return ta;
+
+            // Check if player has moved
+            if (teleportStart.getX() != currLocation.getX() || teleportStart.getY() != currLocation.getY() || teleportStart.getZ() != currLocation.getZ())
                 ta.setCanTeleport(false);
 
             return ta;
         } catch (SQLException e) {
+            Bukkit.getLogger().severe("There was an issue reading a teleportation attempt for player " + player.getUniqueId());
             e.printStackTrace();
         }
 
@@ -104,9 +109,9 @@ public class TeleportationAttemptsConnection extends AbstractConnection {
      * Delete an attempt from the table.
      *
      * @param player, The player to delete the attempt for.
-     * @return boolean
      */
-    public boolean removeAttempt(Player player) {
-        return DatabaseUtil.execute(this.conn(), String.format("delete from %s where player_uuid = ?", tableName), player.getUniqueId().toString());
+    public void removeAttempt(@NotNull Player player) {
+        String sql = "delete from %s where player_uuid = ?";
+        DatabaseUtil.execute(this.conn(), String.format(sql, tableName), player.getUniqueId().toString());
     }
 }

@@ -1,0 +1,34 @@
+# -- HOMES --
+# The item the player will use when
+# right-clicking to open the homes list.
+openHomeItem: "compass"
+
+# The default item when create-home command
+# is only given a home name, or is only
+# provided with the default material name.
+defaultHomeItem: "white_wool"
+
+# The title of the inventory displaying the
+# players home list.
+inventoryTitle: "Your homes"
+
+# -- TELEPORTING --
+teleportTitle: "Please stand still"
+teleportSubtitle: "You will be teleported in %d..." # You can use %d here as a placeholder for the seconds counter.
+teleportSuccess: "Teleported to %s" # You can use %s here as a placeholder for the home name the player was teleported to.
+cancelOnMove: true # true | false
+delay: 3 # (seconds) 0 is no delay.
+
+# -- MESSAGES --
+homeCreated: "%s has been created successfully." # You can use %s here as a placeholder for the players home name.
+homeDeleted: "%s has been deleted successfully." # You can use %s here as a placeholder for the players home name.
+
+# -- ERROR MESSAGES --
+invalidHomeItem: "The material you entered is not valid, please try a different one."
+falseHomeItem: "This home item does not belong to you."
+teleportedWhileTeleporting: "You cannot teleport while already teleporting."
+movedWhileTeleporting: "Teleport has been cancelled because you have moved."
+noHomes: "You have not created any homes yet. Use /create-home to make your first one."
+
+# -- DEBUGGING --
+debugLevel: "error" # Possible levels: error, info

@@ -1,7 +1,10 @@
 package com.samleighton.sethomestwo.commands;
 
 import com.samleighton.sethomestwo.connections.HomesConnection;
+import com.samleighton.sethomestwo.enums.UserError;
+import com.samleighton.sethomestwo.enums.UserSuccess;
 import com.samleighton.sethomestwo.utils.ChatUtils;
+import com.samleighton.sethomestwo.utils.ConfigUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,14 +14,17 @@ import org.jetbrains.annotations.NotNull;
 public class DeleteHome implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String[] args) {
-        if(!(commandSender instanceof Player)) return false;
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(UserError.PLAYERS_ONLY.getValue());
+            return false;
+        }
 
         Player player = (Player) commandSender;
 
         // Args length guard
-        if(args.length != 1) {
+        if (args.length != 1) {
             ChatUtils.notEnoughArguments(player);
-            ChatUtils.sendInfo(player, "Usage: /delete-home [name]");
+            ChatUtils.sendInfo(player, UserError.DELETE_HOME_USAGE.getValue());
             return false;
         }
 
@@ -28,7 +34,14 @@ public class DeleteHome implements CommandExecutor {
         HomesConnection homesConnection = new HomesConnection();
         boolean success = homesConnection.deleteHome(playerUUID, homeName);
 
-        if(success) ChatUtils.sendSuccess(player, String.format("%s has been deleted successfully.", homeName));
+        // Guard for successful home deletion
+        if (!success) {
+            ChatUtils.sendError(player, String.format("You do not have a home by the name %s", homeName));
+            return false;
+        }
+
+        String successMessage = ConfigUtil.getConfig().getString("homeDeleted", UserSuccess.HOME_DELETED.getValue());
+        ChatUtils.sendSuccess(player, String.format(successMessage, homeName));
         return false;
     }
 }

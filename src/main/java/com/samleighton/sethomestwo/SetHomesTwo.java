@@ -6,12 +6,18 @@ import com.samleighton.sethomestwo.commands.GiveHomesItem;
 import com.samleighton.sethomestwo.connections.ConnectionManager;
 import com.samleighton.sethomestwo.connections.HomesConnection;
 import com.samleighton.sethomestwo.connections.TeleportationAttemptsConnection;
+import com.samleighton.sethomestwo.enums.DebugLevel;
 import com.samleighton.sethomestwo.events.PlayerMoveWhileTeleporting;
 import com.samleighton.sethomestwo.events.RightClickHomeItem;
+import com.samleighton.sethomestwo.utils.ConfigUtil;
+import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 
 public final class SetHomesTwo extends JavaPlugin {
@@ -19,6 +25,9 @@ public final class SetHomesTwo extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // Create config
+        initConfig();
+
         // Plugin startup logic
         registerCommands();
         registerEventListeners();
@@ -28,8 +37,10 @@ public final class SetHomesTwo extends JavaPlugin {
 
         // Init database connections
         boolean success = connectionManager.createConnection("homes", "homes");
-        if (success){
-            Bukkit.getLogger().info("Homes database connection was successful.");
+        if (success) {
+            if (ConfigUtil.getDebugLevel().equals(DebugLevel.INFO))
+                Bukkit.getLogger().info("Homes database connection was successful.");
+
             new HomesConnection().init();
             new TeleportationAttemptsConnection().init();
         }
@@ -39,7 +50,31 @@ public final class SetHomesTwo extends JavaPlugin {
     public void onDisable() {
         // Close database connections
         connectionManager.closeConnections();
-        Bukkit.getLogger().info("Connections closed...");
+
+        if (ConfigUtil.getDebugLevel().equals(DebugLevel.INFO))
+            Bukkit.getLogger().info("Connections closed...");
+    }
+
+    /**
+     * Initialize the default values for the config
+     */
+    public void initConfig() {
+        File outputConfig = new File(getDataFolder(), "config.yml");
+
+        try (InputStream defaultConfig = this.getResource("default-config.yml")) {
+            if (outputConfig.exists()) return;
+            if (!outputConfig.createNewFile()) return;
+
+            try (FileWriter fileWriter = new FileWriter(outputConfig)) {
+                assert defaultConfig != null;
+                IOUtils.copy(defaultConfig, fileWriter);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            Bukkit.getLogger().severe("There was an issue creating the default config file.");
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -66,20 +101,21 @@ public final class SetHomesTwo extends JavaPlugin {
         // Create the plugin directory
         if (!getDataFolder().exists()) {
             boolean success = getDataFolder().mkdir();
-            if(!success)
-                Bukkit.getLogger().warning("Could not create plugin folder.");
+            if (!success)
+                Bukkit.getLogger().severe("Could not create plugin folder.");
         }
 
         File databasesDir = new File(getDataFolder().getAbsolutePath() + "/database");
         if (!databasesDir.exists()) {
             boolean success = databasesDir.mkdir();
-            if(!success)
-                Bukkit.getLogger().warning("Could not create databases folder.");
+            if (!success)
+                Bukkit.getLogger().severe("Could not create database folder.");
         }
     }
 
     /**
      * Retrieves the plugin's connection manager.
+     *
      * @return ConnectionManager
      */
     public ConnectionManager getConnectionManager() {

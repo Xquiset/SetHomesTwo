@@ -1,5 +1,6 @@
 package com.samleighton.sethomestwo.commands;
 
+import com.samleighton.sethomestwo.enums.UserError;
 import com.samleighton.sethomestwo.items.HomeItem;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,8 +13,8 @@ public class GiveHomesItem implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String[] strings) {
-        if(!(commandSender instanceof Player)) {
-            commandSender.sendMessage("Only players may execute this command.");
+        if (!(commandSender instanceof Player)) {
+            commandSender.sendMessage(UserError.PLAYERS_ONLY.getValue());
             return false;
         }
 

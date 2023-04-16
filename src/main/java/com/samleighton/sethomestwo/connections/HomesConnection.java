@@ -5,7 +5,6 @@ import com.samleighton.sethomestwo.models.Home;
 import com.samleighton.sethomestwo.utils.DatabaseUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class HomesConnection extends AbstractConnection{
+public class HomesConnection extends AbstractConnection {
+
+    private final String tableName = "players_homes";
 
     public HomesConnection() {
         super(SetHomesTwo.getPlugin(SetHomesTwo.class).getConnectionManager().getConnection("homes"));
@@ -26,7 +27,7 @@ public class HomesConnection extends AbstractConnection{
         if (this.conn() == null) return;
 
         // Create players_homes table
-        String createPlayersHomesSQL = "create table if not exists players_homes (\n" +
+        String createPlayersHomesSQL = "create table if not exists %s (\n" +
                 "id integer PRIMARY KEY, \n" +
                 "player_uuid TEXT NOT NULL, \n" +
                 "material TEXT NOT NULL, \n" +
@@ -39,7 +40,7 @@ public class HomesConnection extends AbstractConnection{
                 "pitch real NOT NULL, \n" +
                 "yaw real NOT NULL " +
                 ");";
-        DatabaseUtil.execute(this.conn(), createPlayersHomesSQL);
+        DatabaseUtil.execute(this.conn(), String.format(createPlayersHomesSQL, tableName));
     }
 
 
@@ -53,13 +54,11 @@ public class HomesConnection extends AbstractConnection{
      * @return boolean
      */
     public boolean createNewHome(String playerUUID, String material, Location playerLocation, String name, String description) {
-        boolean isBlankOrDefault = material == null || material.equalsIgnoreCase("d") || material.equalsIgnoreCase("default");
-        material = isBlankOrDefault ? Material.WHITE_WOOL.name() : material;
         Home home = new Home(playerUUID, material, playerLocation, name, description);
-        String sql = "insert into players_homes (player_uuid, world, material, name, description, x, y, z, pitch, yaw) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String sql = "insert into %s (player_uuid, world, material, name, description, x, y, z, pitch, yaw) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         return DatabaseUtil.execute(
                 this.conn(),
-                sql,
+                String.format(sql, tableName),
                 home.getUUIDBelongingTo(),
                 home.getWorld(),
                 home.getMaterial(),
@@ -82,8 +81,8 @@ public class HomesConnection extends AbstractConnection{
     public List<Home> getPlayersHomes(String playerUUID) {
         List<Home> playerHomes = new ArrayList<>();
 
-        String sql = "select * from players_homes where player_uuid = ?";
-        ResultSet rs = DatabaseUtil.fetch(this.conn(), sql, playerUUID);
+        String sql = "select * from %s where player_uuid = ?";
+        ResultSet rs = DatabaseUtil.fetch(this.conn(), String.format(sql, tableName), playerUUID);
 
         if (rs == null) return playerHomes;
 
@@ -107,9 +106,9 @@ public class HomesConnection extends AbstractConnection{
                 playerHomes.add(home);
             }
         } catch (SQLException e) {
+            Bukkit.getLogger().severe("There was an issue reading homes for player " + playerUUID);
             e.printStackTrace();
         }
-
 
         return playerHomes;
     }
@@ -122,7 +121,14 @@ public class HomesConnection extends AbstractConnection{
      * @return boolean
      */
     public boolean deleteHome(String playerUUID, String homeName) {
-        String sql = "delete from players_homes where player_uuid = ? and name = ?";
-        return DatabaseUtil.execute(this.conn(), sql, playerUUID, homeName);
+        List<Home> homes = getPlayersHomes(playerUUID);
+        for (Home home : homes) {
+            if (home.getName().equalsIgnoreCase(homeName)) {
+                String sql = "delete from %s where player_uuid = ? and name = ?";
+                return DatabaseUtil.execute(this.conn(), String.format(sql, tableName), playerUUID, homeName);
+            }
+        }
+
+        return false;
     }
 }

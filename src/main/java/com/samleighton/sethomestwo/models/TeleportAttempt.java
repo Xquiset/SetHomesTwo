@@ -18,10 +18,6 @@ public class TeleportAttempt {
         return this.location;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
     public Player getPlayer() {
         return this.player;
     }
@@ -30,11 +26,11 @@ public class TeleportAttempt {
         this.player = player;
     }
 
-    public void setCanTeleport(boolean canTeleport){
+    public void setCanTeleport(boolean canTeleport) {
         this.canTeleport = canTeleport;
     }
 
-    public boolean canTeleport(){
+    public boolean canTeleport() {
         return this.canTeleport;
     }
 }
