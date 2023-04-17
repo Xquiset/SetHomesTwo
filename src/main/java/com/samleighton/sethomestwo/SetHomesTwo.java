@@ -3,15 +3,18 @@ package com.samleighton.sethomestwo;
 import com.samleighton.sethomestwo.commands.CreateHome;
 import com.samleighton.sethomestwo.commands.DeleteHome;
 import com.samleighton.sethomestwo.commands.GiveHomesItem;
+import com.samleighton.sethomestwo.tabcompleters.HomesTabCompleter;
 import com.samleighton.sethomestwo.connections.ConnectionManager;
 import com.samleighton.sethomestwo.connections.HomesConnection;
 import com.samleighton.sethomestwo.connections.TeleportationAttemptsConnection;
 import com.samleighton.sethomestwo.enums.DebugLevel;
 import com.samleighton.sethomestwo.events.PlayerMoveWhileTeleporting;
 import com.samleighton.sethomestwo.events.RightClickHomeItem;
+import com.samleighton.sethomestwo.tabcompleters.MaterialsTabCompleter;
 import com.samleighton.sethomestwo.utils.ConfigUtil;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -82,8 +85,14 @@ public final class SetHomesTwo extends JavaPlugin {
      */
     public void registerCommands() {
         Objects.requireNonNull(this.getCommand("give-homes-item")).setExecutor(new GiveHomesItem());
-        Objects.requireNonNull(this.getCommand("create-home")).setExecutor(new CreateHome());
-        Objects.requireNonNull(this.getCommand("delete-home")).setExecutor(new DeleteHome());
+
+        PluginCommand createHome = Objects.requireNonNull(this.getCommand("create-home"));
+        createHome.setExecutor(new CreateHome());
+        createHome.setTabCompleter(new MaterialsTabCompleter());
+
+        PluginCommand deleteHome = Objects.requireNonNull(this.getCommand("delete-home"));
+        deleteHome.setExecutor(new DeleteHome());
+        deleteHome.setTabCompleter(new HomesTabCompleter());
     }
 
     /**

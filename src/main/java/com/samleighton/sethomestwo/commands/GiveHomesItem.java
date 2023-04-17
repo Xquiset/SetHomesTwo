@@ -10,7 +10,6 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 public class GiveHomesItem implements CommandExecutor {
-
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String[] strings) {
         if (!(commandSender instanceof Player)) {

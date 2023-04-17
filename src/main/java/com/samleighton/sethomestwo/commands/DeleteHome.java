@@ -3,13 +3,20 @@ package com.samleighton.sethomestwo.commands;
 import com.samleighton.sethomestwo.connections.HomesConnection;
 import com.samleighton.sethomestwo.enums.UserError;
 import com.samleighton.sethomestwo.enums.UserSuccess;
+import com.samleighton.sethomestwo.models.Home;
 import com.samleighton.sethomestwo.utils.ChatUtils;
 import com.samleighton.sethomestwo.utils.ConfigUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DeleteHome implements CommandExecutor {
     @Override

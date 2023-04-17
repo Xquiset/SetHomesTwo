@@ -9,10 +9,7 @@ import com.samleighton.sethomestwo.models.Home;
 import com.samleighton.sethomestwo.models.TeleportAttempt;
 import com.samleighton.sethomestwo.utils.ChatUtils;
 import com.samleighton.sethomestwo.utils.ConfigUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -70,7 +67,8 @@ public class HomesGui implements Listener {
 
         // Setup item lore and display name
         Objects.requireNonNull(meta).setDisplayName(home.getName());
-        Objects.requireNonNull(meta).setLore(Collections.singletonList(home.getDescription()));
+        if(home.getDescription() != null)
+            Objects.requireNonNull(meta).setLore(Collections.singletonList(home.getDescription()));
 
         // Persist the home to the item
         NamespacedKey homeKey = new NamespacedKey(SetHomesTwo.getPlugin(SetHomesTwo.class), "home");
@@ -123,6 +121,9 @@ public class HomesGui implements Listener {
         int[] seconds = {ConfigUtil.getConfig().getInt("delay", 3)};
         // Schedule repeating task for every second
         plugin.getServer().getScheduler().runTaskTimer(plugin, bukkitTask -> {
+            // Guard to check if task has been cancelled.
+            if(bukkitTask.isCancelled()) return;
+
             // Guard if the player has moved
             TeleportAttempt currAttempt = tac.getLastAttempt(player);
             if (currAttempt != null) {
@@ -140,18 +141,24 @@ public class HomesGui implements Listener {
                 String title = ConfigUtil.getConfig().getString("teleportTitle", "Please stand still");
                 String subtitle = ConfigUtil.getConfig().getString("teleportSubtitle", "You will be teleported in %d...");
                 player.sendTitle(ChatColor.GOLD + title, String.format(subtitle, seconds[0]), 0, 999, 0);
+                player.playNote(player.getLocation(), Instrument.DIDGERIDOO, Note.sharp(2, Note.Tone.F));
                 seconds[0]--;
                 return;
             }
 
+            bukkitTask.cancel();
             // This logic fires after total seconds have elapsed
             assert home != null;
+            tac.removeAttempt(player);
+
             player.teleport(home.asLocation());
             player.resetTitle();
-            tac.removeAttempt(player);
+            player.playNote(player.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
+            player.spawnParticle(Particle.PORTAL, player.getLocation(), 100);
+
             String teleportSuccess = ConfigUtil.getConfig().getString("teleportSuccess", UserSuccess.TELEPORTED.getValue());
             ChatUtils.sendSuccess(player, String.format(teleportSuccess, home.getName()));
-            bukkitTask.cancel();
+
         }, 0, 20L);
     }
 

@@ -18,10 +18,6 @@ import java.util.Arrays;
 
 public class CreateHome implements CommandExecutor {
 
-    public CreateHome() {
-        super();
-    }
-
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String[] args) {
         // Ensure command executor is a player
