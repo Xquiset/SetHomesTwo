@@ -28,15 +28,15 @@ public final class SetHomesTwo extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // Create the directories for the plugin
+        createDirectories();
+
         // Create config
         initConfig();
 
         // Plugin startup logic
         registerCommands();
         registerEventListeners();
-
-        // Create the directories for the plugin
-        createDirectories();
 
         // Init database connections
         boolean success = connectionManager.createConnection("homes", "homes");
@@ -62,6 +62,12 @@ public final class SetHomesTwo extends JavaPlugin {
      * Initialize the default values for the config
      */
     public void initConfig() {
+        File dataFolder = getDataFolder();
+
+        System.out.println(getDataFolder());
+        if (dataFolder.getAbsolutePath().contains("'")) {
+
+        }
         File outputConfig = new File(getDataFolder(), "config.yml");
 
         try (InputStream defaultConfig = this.getResource("default-config.yml")) {
