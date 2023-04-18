@@ -15,3 +15,6 @@ commands:
   delete-home:
     description: Delete a home from your home list
     permission: sethomestwo.delete-home
+  add-to-blacklist:
+    description: Add dimensions to be blacklisted from setting homes
+    permission: sethomestwo.add-to-blacklist

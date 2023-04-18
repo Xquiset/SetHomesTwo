@@ -1,5 +1,6 @@
 package com.samleighton.sethomestwo;
 
+import com.samleighton.sethomestwo.commands.AddDimensionToBlacklist;
 import com.samleighton.sethomestwo.commands.CreateHome;
 import com.samleighton.sethomestwo.commands.DeleteHome;
 import com.samleighton.sethomestwo.commands.GiveHomesItem;
@@ -93,6 +94,9 @@ public final class SetHomesTwo extends JavaPlugin {
         PluginCommand deleteHome = Objects.requireNonNull(this.getCommand("delete-home"));
         deleteHome.setExecutor(new DeleteHome());
         deleteHome.setTabCompleter(new HomesTabCompleter());
+
+        PluginCommand addBlacklist = Objects.requireNonNull(this.getCommand("add-to-blacklist"));
+        addBlacklist.setExecutor(new AddDimensionToBlacklist());
     }
 
     /**
