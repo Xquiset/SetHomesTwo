@@ -24,7 +24,7 @@ public class BlacklistConnection extends AbstractConnection{
         // Create blacklist table
         String createBlacklistSQL = "create table if not exists %s (\n" +
                 "id integer PRIMARY KEY, \n" +
-                "dimension_id TEXT NOT NULL, \n" +
+                "dimension_name TEXT NOT NULL \n" +
                 ");";
         DatabaseUtil.execute(this.conn(), String.format(createBlacklistSQL, tableName));
     }
