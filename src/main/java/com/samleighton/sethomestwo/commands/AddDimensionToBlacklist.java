@@ -11,6 +11,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AddDimensionToBlacklist implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String[] args) {
         if (!(commandSender instanceof Player)) {
@@ -21,15 +24,19 @@ public class AddDimensionToBlacklist implements CommandExecutor {
         Player player = (Player) commandSender;
 
         // Args length guard
-        if (args.length <= 1) {
+        if (args.length < 1) {
             ChatUtils.notEnoughArguments(player);
             ChatUtils.sendInfo(player, UserError.ADD_TO_BLACKLIST_USAGE.getValue());
             return false;
         }
 
-        String blacklist = args[0];
+        List<String> blacklist = new ArrayList<>();
+        for (int i = 0; i < args.length; i++) {
+            blacklist.add(args[i]);
+        }
+
         BlacklistConnection blacklistConnection = new BlacklistConnection();
-        boolean success = blacklistConnection.addToBlacklist(blacklist);
+        boolean success = blacklistConnection.addToBlacklistTable(blacklist);
 
         // Guard for successful addition of blacklist
         if (!success) {
