@@ -12,13 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DimensionTabCompleter implements TabCompleter {
-    List<String> validDimensions = new BlacklistConnection().getValidDimensions();
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        final List<String> completions = new ArrayList<>();
+        List<String> completions = new ArrayList<>();
+        for(String arg : args){
+            StringUtil.copyPartialMatches(arg, new BlacklistConnection().getValidDimensions(), completions);
+        }
 
-        StringUtil.copyPartialMatches(args[0], validDimensions, completions);
         return completions;
     }
 }
