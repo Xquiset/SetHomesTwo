@@ -36,14 +36,16 @@ public class BlacklistConnection extends AbstractConnection{
      * @return boolean
      */
     public boolean addToBlacklistTable(List<String> dimensionNames) {
-        for (int i = 0; i < dimensionNames.size(); i++) {
-            String sql = "insert into %s (dimension_name) VALUES (?);";
-            return DatabaseUtil.execute(
-                    this.conn(),
-                    String.format(sql, tableName),
-                    dimensionNames.get(i)
-            );
-        }
-        return false;
+        boolean execute = false;
+//        for (int i = 0; i < dimensionNames.size(); i++) {
+        String dimensionName = dimensionNames.get(0);
+        String sql = "insert into %s (dimension_name) VALUES (?);";
+        return DatabaseUtil.execute(
+                this.conn(),
+                String.format(sql, tableName),
+                dimensionName
+        );
+//        }
+//        return execute;
     }
 }
