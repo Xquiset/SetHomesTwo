@@ -1,14 +1,19 @@
 package com.samleighton.sethomestwo.connections;
 
 import com.samleighton.sethomestwo.SetHomesTwo;
-import com.samleighton.sethomestwo.models.Home;
 import com.samleighton.sethomestwo.utils.DatabaseUtil;
-import org.bukkit.Location;
+import org.bukkit.Bukkit;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class BlacklistConnection extends AbstractConnection{
+public class BlacklistConnection extends AbstractConnection {
     private final String tableName = "blacklist";
+    private final List<String> validDimensions = new ArrayList<String>() {
+        {
+            Bukkit.getWorlds().forEach(world -> add(world.getName().toLowerCase()));
+        }
+    };
 
     public BlacklistConnection() {
         super(SetHomesTwo.getPlugin(SetHomesTwo.class).getConnectionManager().getConnection("homes"));
@@ -32,20 +37,31 @@ public class BlacklistConnection extends AbstractConnection{
     /**
      * Add blacklist to the database
      *
-     * @param dimensionNames,     List of the dimensions that are to be blacklisted
+     * @param dimensionNames, List of the dimensions that are to be blacklisted
      * @return boolean
      */
     public boolean addToBlacklistTable(List<String> dimensionNames) {
-        boolean execute = false;
-//        for (int i = 0; i < dimensionNames.size(); i++) {
-        String dimensionName = dimensionNames.get(0);
-        String sql = "insert into %s (dimension_name) VALUES (?);";
+        StringBuilder stringBuilder = new StringBuilder();
+        String sql = "insert into %s (dimension_name) VALUES ";
+
+        for (int i = 0; i < dimensionNames.size(); i++) {
+            stringBuilder.append("(?),");
+        }
+        sql += stringBuilder.substring(0, stringBuilder.length() - 1) + ";";
+
         return DatabaseUtil.execute(
                 this.conn(),
                 String.format(sql, tableName),
-                dimensionName
+                dimensionNames
         );
-//        }
-//        return execute;
+    }
+
+    /**
+     * Retrieve a list of the servers valid dimensions.
+     *
+     * @return List
+     */
+    public List<String> getValidDimensions() {
+        return this.validDimensions;
     }
 }
