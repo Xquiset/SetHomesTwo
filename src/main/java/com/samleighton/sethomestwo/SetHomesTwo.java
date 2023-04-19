@@ -50,6 +50,8 @@ public final class SetHomesTwo extends JavaPlugin {
             new HomesConnection().init();
             new TeleportationAttemptsConnection().init();
             new BlacklistConnection().init();
+        } else {
+            Bukkit.getLogger().severe("Could not create database connection!");
         }
     }
 
@@ -59,7 +61,7 @@ public final class SetHomesTwo extends JavaPlugin {
         connectionManager.closeConnections();
 
         if (ConfigUtil.getDebugLevel().equals(DebugLevel.INFO))
-            Bukkit.getLogger().info("Connections closed...");
+            Bukkit.getLogger().info("All database connections closed.");
     }
 
     /**
