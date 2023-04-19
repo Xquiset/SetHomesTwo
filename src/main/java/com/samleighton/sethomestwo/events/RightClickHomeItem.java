@@ -32,9 +32,10 @@ public class RightClickHomeItem implements Listener {
     public void onPlayerRightClickHomeItem(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Action action = event.getAction();
+        Material homeMaterial = Material.matchMaterial(ConfigUtil.getConfig().getString("openHomeItem", Material.COMPASS.name()));
 
         // Basic item guard
-        if ((action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK) || event.getItem() == null || event.getItem().getType() != Material.COMPASS || event.getItem().getItemMeta() == null)
+        if ((action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK) || event.getItem() == null || event.getItem().getType() != homeMaterial || event.getItem().getItemMeta() == null)
             return;
 
         // Get item in hand

@@ -19,6 +19,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -129,8 +131,10 @@ public class HomesGui implements Listener {
             if (currAttempt != null) {
                 if (!currAttempt.canTeleport()) {
                     ChatUtils.sendError(player, ConfigUtil.getConfig().getString("movedWhileTeleporting", UserError.MOVED_WHILE_TELEPORTING.getValue()));
+                    player.playSound(player, Sound.ENTITY_PLAYER_BIG_FALL, 5f, 5f);
                     tac.removeAttempt(player);
                     player.resetTitle();
+                    player.removePotionEffect(PotionEffectType.CONFUSION);
                     bukkitTask.cancel();
                     return;
                 }
@@ -141,6 +145,7 @@ public class HomesGui implements Listener {
                 String title = ConfigUtil.getConfig().getString("teleportTitle", "Please stand still");
                 String subtitle = ConfigUtil.getConfig().getString("teleportSubtitle", "You will be teleported in %d...");
                 player.sendTitle(ChatColor.GOLD + title, String.format(subtitle, seconds[0]), 0, 999, 0);
+                player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 999, 0 , true));
                 player.playNote(player.getLocation(), Instrument.DIDGERIDOO, Note.sharp(2, Note.Tone.F));
                 seconds[0]--;
                 return;
@@ -152,6 +157,7 @@ public class HomesGui implements Listener {
             tac.removeAttempt(player);
 
             player.teleport(home.asLocation());
+            player.removePotionEffect(PotionEffectType.CONFUSION);
             player.resetTitle();
             player.playNote(player.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
             player.spawnParticle(Particle.PORTAL, player.getLocation(), 100);
