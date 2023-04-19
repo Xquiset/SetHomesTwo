@@ -5,6 +5,7 @@ import com.samleighton.sethomestwo.commands.CreateHome;
 import com.samleighton.sethomestwo.commands.DeleteHome;
 import com.samleighton.sethomestwo.commands.GiveHomesItem;
 import com.samleighton.sethomestwo.connections.BlacklistConnection;
+import com.samleighton.sethomestwo.tabcompleters.DimensionTabCompleter;
 import com.samleighton.sethomestwo.tabcompleters.HomesTabCompleter;
 import com.samleighton.sethomestwo.connections.ConnectionManager;
 import com.samleighton.sethomestwo.connections.HomesConnection;
@@ -99,6 +100,7 @@ public final class SetHomesTwo extends JavaPlugin {
 
         PluginCommand addBlacklist = Objects.requireNonNull(this.getCommand("add-to-blacklist"));
         addBlacklist.setExecutor(new AddDimensionToBlacklist());
+        addBlacklist.setTabCompleter(new DimensionTabCompleter());
     }
 
     /**

@@ -12,11 +12,16 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class AddDimensionToBlacklist implements CommandExecutor {
-    private List<String> validDimensions = Arrays.asList(new String[]{"nether", "overworld", "end"});
+    public List<String> validDimensions = new ArrayList<String>(){
+        {
+            add("nether");
+            add("overworld");
+            add("end");
+        }
+    };
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String[] args) {
         if (!(commandSender instanceof Player)) {
             commandSender.sendMessage(UserError.PLAYERS_ONLY.getValue());
