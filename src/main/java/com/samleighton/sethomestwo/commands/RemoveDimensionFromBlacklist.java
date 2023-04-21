@@ -28,8 +28,8 @@ public class RemoveDimensionFromBlacklist implements CommandExecutor {
 
         // Args length guard
         if (args.length < 1) {
-            ChatUtils.notEnoughArguments(player);
-            ChatUtils.sendInfo(player, UserError.ADD_TO_BLACKLIST_USAGE.getValue());
+            ChatUtils.incorrectNumArguments(player);
+            ChatUtils.sendInfo(player, UserError.REMOVE_FROM_BLACKLIST_USAGE.getValue());
             return false;
         }
 

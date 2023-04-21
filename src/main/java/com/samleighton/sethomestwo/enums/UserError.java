@@ -7,6 +7,8 @@ public enum UserError {
     CREATE_HOME_USAGE("Usage: /create-home [name] [display_material | d | default] [description]"),
     DELETE_HOME_USAGE("Usage: /delete-home [name]"),
     ADD_TO_BLACKLIST_USAGE("Usage: /add-to-blacklist [dimension names]"),
+    REMOVE_FROM_BLACKLIST_USAGE("Usage: /remove-from-blacklist [dimension names]"),
+    GET_BLACKLIST_USAGE("Usage: /get-blacklisted-dimensions"),
     INVALID_DIMENSION("Dimension entered is invalid. Please enter a valid dimension (nether, overworld, end)"),
     DIMENSION_IS_BLACKLISTED("You cannot set home in this dimension because it is blacklisted"),
     ALREADY_TELEPORTING("You cannot teleport while already teleporting."),

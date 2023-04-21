@@ -18,7 +18,7 @@ public class ChatUtils {
         player.sendMessage(prefix + ChatColor.GREEN + msg);
     }
 
-    public static void notEnoughArguments(Player player) {
+    public static void incorrectNumArguments(Player player) {
         sendError(player, "Incorrect number of arguments supplied to the command.");
     }
 }

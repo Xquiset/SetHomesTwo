@@ -29,7 +29,7 @@ public class AddDimensionToBlacklist implements CommandExecutor {
 
         // Args length guard
         if (args.length < 1) {
-            ChatUtils.notEnoughArguments(player);
+            ChatUtils.incorrectNumArguments(player);
             ChatUtils.sendInfo(player, UserError.ADD_TO_BLACKLIST_USAGE.getValue());
             return false;
         }

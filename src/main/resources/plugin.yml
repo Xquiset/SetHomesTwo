@@ -21,3 +21,6 @@ commands:
   remove-from-blacklist:
     description: Remove dimensions from blacklist table
     permission: sethomestwo.remove-from-blacklist
+  get-blacklisted-dimensions:
+    description: Retrieves a list of the blacklisted dimensions
+    permission: sethomestwo.get-blacklisted-dimensions

@@ -34,7 +34,7 @@ public class CreateHome implements CommandExecutor {
 
         // Guard to ensure we have minimum number of args
         if (args.length < 1) {
-            ChatUtils.notEnoughArguments(player);
+            ChatUtils.incorrectNumArguments(player);
             ChatUtils.sendInfo(player, UserError.CREATE_HOME_USAGE.getValue());
             return false;
         }
