@@ -18,3 +18,6 @@ commands:
   add-to-blacklist:
     description: Add dimensions to be blacklisted from setting homes
     permission: sethomestwo.add-to-blacklist
+  remove-from-blacklist:
+    description: Remove dimensions from blacklist table
+    permission: sethomestwo.remove-from-blacklist

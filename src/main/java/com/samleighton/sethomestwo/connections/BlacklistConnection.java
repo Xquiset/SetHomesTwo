@@ -67,6 +67,22 @@ public class BlacklistConnection extends AbstractConnection {
         );
     }
 
+    public boolean removeFromBacklistTable(List<String> dimensionNames) {
+        StringBuilder stringBuilder = new StringBuilder();
+        String sql = "delete from %s where dimension_name IN (";
+
+        for (int i = 0; i < dimensionNames.size(); i++) {
+            stringBuilder.append("(?),");
+        }
+        sql += stringBuilder.substring(0, stringBuilder.length() - 1) + ");";
+
+        return DatabaseUtil.execute(
+                this.conn(),
+                String.format(sql, tableName),
+                dimensionNames
+        );
+    }
+
     /**
      * Retrieve a list of the dimensions that are blacklisted.
      *
@@ -81,7 +97,9 @@ public class BlacklistConnection extends AbstractConnection {
         if (rs == null) return blacklistedDimensions;
 
         try {
-            blacklistedDimensions.add(rs.getString("dimension_name"));
+            while (rs.next()) {
+                blacklistedDimensions.add(rs.getString("dimension_name"));
+            }
         } catch (SQLException e) {
             Bukkit.getLogger().severe("There was an issue retrieving blacklisted dimensions");
             e.printStackTrace();

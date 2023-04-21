@@ -1,9 +1,6 @@
 package com.samleighton.sethomestwo;
 
-import com.samleighton.sethomestwo.commands.AddDimensionToBlacklist;
-import com.samleighton.sethomestwo.commands.CreateHome;
-import com.samleighton.sethomestwo.commands.DeleteHome;
-import com.samleighton.sethomestwo.commands.GiveHomesItem;
+import com.samleighton.sethomestwo.commands.*;
 import com.samleighton.sethomestwo.connections.BlacklistConnection;
 import com.samleighton.sethomestwo.connections.ConnectionManager;
 import com.samleighton.sethomestwo.connections.HomesConnection;
@@ -14,6 +11,7 @@ import com.samleighton.sethomestwo.events.RightClickHomeItem;
 import com.samleighton.sethomestwo.tabcompleters.DimensionTabCompleter;
 import com.samleighton.sethomestwo.tabcompleters.HomesTabCompleter;
 import com.samleighton.sethomestwo.tabcompleters.MaterialsTabCompleter;
+import com.samleighton.sethomestwo.tabcompleters.RemoveDimensionTabCompleter;
 import com.samleighton.sethomestwo.utils.ConfigUtil;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
@@ -100,9 +98,13 @@ public final class SetHomesTwo extends JavaPlugin {
         deleteHome.setExecutor(new DeleteHome());
         deleteHome.setTabCompleter(new HomesTabCompleter());
 
-        PluginCommand addBlacklist = Objects.requireNonNull(this.getCommand("add-to-blacklist"));
-        addBlacklist.setExecutor(new AddDimensionToBlacklist());
-        addBlacklist.setTabCompleter(new DimensionTabCompleter());
+        PluginCommand addToBlacklist = Objects.requireNonNull(this.getCommand("add-to-blacklist"));
+        addToBlacklist.setExecutor(new AddDimensionToBlacklist());
+        addToBlacklist.setTabCompleter(new DimensionTabCompleter());
+
+        PluginCommand removeFromBlacklist = Objects.requireNonNull(this.getCommand("remove-from-blacklist"));
+        removeFromBlacklist.setExecutor(new RemoveDimensionFromBlacklist());
+        removeFromBlacklist.setTabCompleter(new RemoveDimensionTabCompleter());
     }
 
     /**
