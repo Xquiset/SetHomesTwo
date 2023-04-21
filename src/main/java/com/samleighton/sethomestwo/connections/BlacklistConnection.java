@@ -4,8 +4,12 @@ import com.samleighton.sethomestwo.SetHomesTwo;
 import com.samleighton.sethomestwo.utils.DatabaseUtil;
 import org.bukkit.Bukkit;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BlacklistConnection extends AbstractConnection {
     private final String tableName = "blacklist";
@@ -14,6 +18,13 @@ public class BlacklistConnection extends AbstractConnection {
             Bukkit.getWorlds().forEach(world -> add(world.getName().toLowerCase()));
         }
     };
+
+    // Mapping the environment grabbed from player to our valid dimension list
+    private final Map<String, String> dimensionsMap = new HashMap<String, String>() {{
+        put("NORMAL", validDimensions.get(0));
+        put("NETHER", validDimensions.get(1));
+        put("THE_END", validDimensions.get(2));
+    }};
 
     public BlacklistConnection() {
         super(SetHomesTwo.getPlugin(SetHomesTwo.class).getConnectionManager().getConnection("homes"));
@@ -57,11 +68,43 @@ public class BlacklistConnection extends AbstractConnection {
     }
 
     /**
-     * Retrieve a list of the servers valid dimensions.
+     * Retrieve a list of the dimensions that are blacklisted.
+     *
+     * @return List<String>
+     */
+    public List<String> getBlacklistedDimensions() {
+        List<String> blacklistedDimensions = new ArrayList<>();
+
+        String sql = "select * from %s";
+        ResultSet rs = DatabaseUtil.fetch(this.conn(), String.format(sql, tableName));
+
+        if (rs == null) return blacklistedDimensions;
+
+        try {
+            blacklistedDimensions.add(rs.getString("dimension_name"));
+        } catch (SQLException e) {
+            Bukkit.getLogger().severe("There was an issue retrieving blacklisted dimensions");
+            e.printStackTrace();
+        }
+
+        return blacklistedDimensions;
+    }
+
+    /**
+     * Retrieve a list of the server's valid dimensions.
      *
      * @return List
      */
     public List<String> getValidDimensions() {
         return this.validDimensions;
+    }
+
+    /**
+     * Retrieve dimensions mapping.
+     *
+     * @return Map<String, String>
+     */
+    public Map<String, String> getDimensionsMap() {
+        return this.dimensionsMap;
     }
 }

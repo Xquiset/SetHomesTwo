@@ -1,5 +1,6 @@
 package com.samleighton.sethomestwo.commands;
 
+import com.samleighton.sethomestwo.connections.BlacklistConnection;
 import com.samleighton.sethomestwo.connections.HomesConnection;
 import com.samleighton.sethomestwo.enums.UserError;
 import com.samleighton.sethomestwo.enums.UserSuccess;
@@ -15,6 +16,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class CreateHome implements CommandExecutor {
 
@@ -33,6 +36,18 @@ public class CreateHome implements CommandExecutor {
         if (args.length < 1) {
             ChatUtils.notEnoughArguments(player);
             ChatUtils.sendInfo(player, UserError.CREATE_HOME_USAGE.getValue());
+            return false;
+        }
+
+        // Grab list of blacklisted dimensions, dimension player is in, and dimensions map
+        BlacklistConnection blacklistConnection = new BlacklistConnection();
+        List<String> blacklistedDimensions = blacklistConnection.getBlacklistedDimensions();
+        String playerDimension = player.getWorld().getEnvironment().toString();
+        Map<String, String> dimensionsMap = blacklistConnection.getDimensionsMap();
+
+        // Check if player is in a blacklisted dimension before creating home
+        if (blacklistedDimensions.contains(dimensionsMap.get(playerDimension))) {
+            ChatUtils.sendError(player, UserError.DIMENSION_IS_BLACKLISTED.getValue());
             return false;
         }
 
