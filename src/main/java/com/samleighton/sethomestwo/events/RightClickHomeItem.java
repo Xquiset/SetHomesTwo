@@ -1,6 +1,7 @@
 package com.samleighton.sethomestwo.events;
 
 import com.samleighton.sethomestwo.SetHomesTwo;
+import com.samleighton.sethomestwo.connections.BlacklistConnection;
 import com.samleighton.sethomestwo.connections.HomesConnection;
 import com.samleighton.sethomestwo.datatypes.PersistentString;
 import com.samleighton.sethomestwo.enums.DebugLevel;
@@ -22,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class RightClickHomeItem implements Listener {
@@ -58,8 +60,19 @@ public class RightClickHomeItem implements Listener {
             return;
         }
 
+        BlacklistConnection blacklistConnection = new BlacklistConnection();
         HomesConnection homesConnection = new HomesConnection();
         List<Home> playersHomes = homesConnection.getPlayersHomes(player.getUniqueId().toString());
+        for (int i = 0; i < playersHomes.size(); i++) {
+            String dimension = playersHomes.get(i).getDimension();
+            List<String> blacklistedDimensions = blacklistConnection.getBlacklistedDimensions();
+            Map<String, String> blacklistedMap = blacklistConnection.getDimensionsMap();
+
+            if (blacklistedDimensions.contains(blacklistedMap.get(dimension))) {
+                playersHomes.get(i).setDescription("Cannot teleport here: dimension blacklisted");
+                playersHomes.get(i).setCanTeleport(false);
+            }
+        }
         this.homesGui.showHomes(playersHomes, player);
 
         if (ConfigUtil.getDebugLevel().equals(DebugLevel.INFO))
