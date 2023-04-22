@@ -37,7 +37,8 @@ public class GetBlacklistedDimensions implements CommandExecutor {
         List<String> blacklistedDimensions = blacklistConnection.getBlacklistedDimensions();
 
         if (blacklistedDimensions.size() > 0) {
-            ChatUtils.sendInfo(player, blacklistedDimensions.toString());
+            String blacklist = "Blacklisted Dimensions: " + blacklistedDimensions;
+            ChatUtils.sendInfo(player, blacklist);
         } else {
             ChatUtils.sendInfo(player, "No dimensions are blacklisted");
         }
