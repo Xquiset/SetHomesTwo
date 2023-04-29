@@ -2,6 +2,7 @@ package com.samleighton.sethomestwo.models;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -14,13 +15,15 @@ public class Home implements Serializable {
     private String name;
     private String description;
     private String world;
+    private String dimension;
     private double x;
     private double y;
     private double z;
     private float pitch;
     private float yaw;
+    private boolean canTeleport = true;
 
-    public Home(String playerUUID, String material, Location location, String name, String description) {
+    public Home(String playerUUID, String material, Location location, String name, String description, String dimension) {
         setUUIDBelongingTo(playerUUID);
         setMaterial(material);
         setWorld(Objects.requireNonNull(location.getWorld()).getUID().toString());
@@ -31,6 +34,7 @@ public class Home implements Serializable {
         setYaw(location.getYaw());
         setName(name);
         setDescription(description);
+        setDimension(dimension);
     }
 
     public String getUUIDBelongingTo() {
@@ -122,5 +126,21 @@ public class Home implements Serializable {
                 getYaw(),
                 getPitch()
         );
+    }
+
+    public String getDimension() {
+        return dimension;
+    }
+
+    public void setDimension(String dimension) {
+        this.dimension = dimension;
+    }
+
+    public boolean getCanTeleport() {
+        return canTeleport;
+    }
+
+    public void setCanTeleport(boolean canTeleport) {
+        this.canTeleport = canTeleport;
     }
 }

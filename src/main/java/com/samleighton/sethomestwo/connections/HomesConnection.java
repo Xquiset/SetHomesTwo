@@ -38,7 +38,8 @@ public class HomesConnection extends AbstractConnection {
                 "y real NOT NULL, \n" +
                 "z real NOT NULL, \n" +
                 "pitch real NOT NULL, \n" +
-                "yaw real NOT NULL " +
+                "yaw real NOT NULL, \n" +
+                "dimension TEXT" +
                 ");";
         DatabaseUtil.execute(this.conn(), String.format(createPlayersHomesSQL, tableName));
     }
@@ -53,9 +54,9 @@ public class HomesConnection extends AbstractConnection {
      * @param description,    The players description of the home.
      * @return boolean
      */
-    public boolean createNewHome(String playerUUID, String material, Location playerLocation, String name, String description) {
-        Home home = new Home(playerUUID, material, playerLocation, name, description);
-        String sql = "insert into %s (player_uuid, world, material, name, description, x, y, z, pitch, yaw) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    public boolean createNewHome(String playerUUID, String material, Location playerLocation, String name, String description, String dimension) {
+        Home home = new Home(playerUUID, material, playerLocation, name, description, dimension);
+        String sql = "insert into %s (player_uuid, world, material, name, description, x, y, z, pitch, yaw, dimension) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
         return DatabaseUtil.execute(
                 this.conn(),
                 String.format(sql, tableName),
@@ -68,7 +69,8 @@ public class HomesConnection extends AbstractConnection {
                 home.getY(),
                 home.getZ(),
                 home.getPitch(),
-                home.getYaw()
+                home.getYaw(),
+                home.getDimension()
         );
     }
 
@@ -101,7 +103,8 @@ public class HomesConnection extends AbstractConnection {
                         rs.getString("material"),
                         homeLocation,
                         rs.getString("name"),
-                        rs.getString("description")
+                        rs.getString("description"),
+                        rs.getString("dimension")
                 );
                 playerHomes.add(home);
             }
