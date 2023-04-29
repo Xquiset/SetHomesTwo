@@ -108,6 +108,9 @@ public final class SetHomesTwo extends JavaPlugin {
 
         PluginCommand getBlacklistedDimensions = this.getCommand("get-blacklisted-dimensions");
         getBlacklistedDimensions.setExecutor(new GetBlacklistedDimensions());
+
+        PluginCommand getPlayerHomes = this.getCommand("get-player-homes");
+        getPlayerHomes.setExecutor(new GetPlayerHomes());
     }
 
     /**

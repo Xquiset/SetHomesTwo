@@ -1,16 +1,20 @@
 package com.samleighton.sethomestwo.connections;
 
+import com.google.common.collect.ImmutableList;
 import com.samleighton.sethomestwo.SetHomesTwo;
 import com.samleighton.sethomestwo.models.Home;
 import com.samleighton.sethomestwo.utils.DatabaseUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public class HomesConnection extends AbstractConnection {
 
@@ -130,5 +134,27 @@ public class HomesConnection extends AbstractConnection {
         }
 
         return false;
+    }
+
+    /**
+     * Delete the home from the database.
+     *
+     * @param playerName, The player name whose homes to retrieve
+     * @return boolean
+     */
+    public String getPlayerUUID(String playerName) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            String name = player.getDisplayName();
+            if (name.equals(playerName)) {
+                return player.getUniqueId().toString();
+            }
+        }
+        return null;
+    }
+
+    public boolean getPlayerHomesCommand(String playerName) {
+        List<Home> playersHomes = getPlayersHomes(getPlayerUUID(playerName));
+        System.out.println(playersHomes);
+        return playersHomes.size() > 0;
     }
 }

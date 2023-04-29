@@ -24,3 +24,6 @@ commands:
   get-blacklisted-dimensions:
     description: Retrieves a list of the blacklisted dimensions
     permission: sethomestwo.get-blacklisted-dimensions
+  get-player-homes:
+    description: Retrieves a list of a given player's homes
+    permission: sethomestwo.get-player-homes
