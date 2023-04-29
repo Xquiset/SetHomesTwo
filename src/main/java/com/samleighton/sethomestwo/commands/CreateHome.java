@@ -93,7 +93,7 @@ public class CreateHome implements CommandExecutor {
 
         // Create the home
         HomesConnection homesConnection = new HomesConnection();
-        boolean created = homesConnection.createNewHome(player.getUniqueId().toString(), material, playerLocation, homeName, description);
+        boolean created = homesConnection.createNewHome(player.getUniqueId().toString(), material, playerLocation, homeName, description, player.getWorld().getEnvironment().toString());
 
         if (!created) {
             Bukkit.getLogger().severe(String.format("Failed to create home for player %s in the database.", player.getUniqueId()));

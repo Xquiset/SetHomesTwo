@@ -30,6 +30,6 @@ falseHomeItem: "This home item does not belong to you."
 teleportedWhileTeleporting: "You cannot teleport while already teleporting."
 movedWhileTeleporting: "Teleport has been cancelled because you have moved."
 noHomes: "You have not created any homes yet. Use /create-home to make your first one."
-
+teleportToBlacklistedDimension: "You cannot teleport to this home because the dimension is blacklisted."
 # -- DEBUGGING --
 debugLevel: "error" # Possible levels: error, info

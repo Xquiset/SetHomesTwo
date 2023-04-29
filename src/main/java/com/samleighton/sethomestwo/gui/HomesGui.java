@@ -97,11 +97,19 @@ public class HomesGui implements Listener {
         ItemMeta clickedItemMeta = clickedItem.getItemMeta();
         NamespacedKey homeKey = new NamespacedKey(SetHomesTwo.getPlugin(SetHomesTwo.class), "home");
 
+        // Get the home from the clicked item
+        Home home = clickedItemMeta.getPersistentDataContainer().get(homeKey, new PersistentHome());
+        // Get the player who clicked the item.
+        Player player = (Player) event.getWhoClicked();
+
+        if (!home.getCanTeleport()) {
+            ChatUtils.sendError(player, ConfigUtil.getConfig().getString("teleportToBlacklistedDimension", UserError.TELEPORT_IS_BLACKLISTED.getValue()));
+            player.closeInventory();
+            return;
+        }
         // Guard to check if item is actually home destination
         if (!clickedItem.getItemMeta().getPersistentDataContainer().has(homeKey, new PersistentHome())) return;
 
-        // Get the player who clicked the item.
-        Player player = (Player) event.getWhoClicked();
         player.closeInventory();
 
         TeleportationAttemptsConnection tac = new TeleportationAttemptsConnection();
@@ -113,8 +121,6 @@ public class HomesGui implements Listener {
             return;
         }
 
-        // Get the home from the clicked item
-        Home home = clickedItemMeta.getPersistentDataContainer().get(homeKey, new PersistentHome());
         // Track player teleport attempt
         tac.createAttempt(new TeleportAttempt(player, player.getLocation()));
 

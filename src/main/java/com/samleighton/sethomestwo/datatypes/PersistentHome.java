@@ -42,6 +42,6 @@ public class PersistentHome implements PersistentDataType<byte[], Home> {
             e.printStackTrace();
         }
 
-        return new Home("", Material.WHITE_WOOL.name(), new Location(Bukkit.getWorlds().get(0), 0, 0, 0, 0.0f, 0.0f), "", "");
+        return new Home("", Material.WHITE_WOOL.name(), new Location(Bukkit.getWorlds().get(0), 0, 0, 0, 0.0f, 0.0f), "", "", "world");
     }
 }
