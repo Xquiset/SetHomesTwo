@@ -10,10 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class HomesConnection extends AbstractConnection {
@@ -155,9 +152,12 @@ public class HomesConnection extends AbstractConnection {
         return null;
     }
 
-    public boolean getPlayerHomesCommand(String playerName) {
+    public List<String> getPlayerHomesCommand(String playerName) {
+        List<String> playerHomesMap = new ArrayList<>();
         List<Home> playersHomes = getPlayersHomes(getPlayerUUID(playerName));
-        System.out.println(playersHomes);
-        return playersHomes.size() > 0;
+        for (Home home : playersHomes) {
+            playerHomesMap.add(home.getName());
+        }
+        return playerHomesMap;
     }
 }
