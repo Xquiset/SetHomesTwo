@@ -1,20 +1,14 @@
 package com.samleighton.sethomestwo.commands;
 
 import com.samleighton.sethomestwo.connections.BlacklistConnection;
-import com.samleighton.sethomestwo.enums.DebugLevel;
 import com.samleighton.sethomestwo.enums.UserError;
-import com.samleighton.sethomestwo.enums.UserSuccess;
 import com.samleighton.sethomestwo.utils.ChatUtils;
-import com.samleighton.sethomestwo.utils.ConfigUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class GetBlacklistedDimensions implements CommandExecutor {
@@ -25,6 +19,12 @@ public class GetBlacklistedDimensions implements CommandExecutor {
         }
 
         Player player = (Player) commandSender;
+
+        // Permission guard
+        if(!player.hasPermission("sh2.get-blacklisted-dimensions")){
+            ChatUtils.invalidPermissions(player);
+            return false;
+        }
 
         // Args length guard
         if (args.length > 0) {

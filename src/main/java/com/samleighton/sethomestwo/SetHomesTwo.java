@@ -106,10 +106,10 @@ public final class SetHomesTwo extends JavaPlugin {
         removeFromBlacklist.setExecutor(new RemoveDimensionFromBlacklist());
         removeFromBlacklist.setTabCompleter(new RemoveDimensionTabCompleter());
 
-        PluginCommand getBlacklistedDimensions = this.getCommand("get-blacklisted-dimensions");
+        PluginCommand getBlacklistedDimensions = Objects.requireNonNull(this.getCommand("get-blacklisted-dimensions"));
         getBlacklistedDimensions.setExecutor(new GetBlacklistedDimensions());
 
-        PluginCommand getPlayerHomes = this.getCommand("get-player-homes");
+        PluginCommand getPlayerHomes = Objects.requireNonNull(this.getCommand("get-player-homes"));
         getPlayerHomes.setExecutor(new GetPlayerHomes());
     }
 

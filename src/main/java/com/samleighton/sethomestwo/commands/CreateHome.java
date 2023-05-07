@@ -32,6 +32,12 @@ public class CreateHome implements CommandExecutor {
         Player player = (Player) commandSender;
         Location playerLocation = player.getLocation();
 
+        // Permission guard
+        if(!player.hasPermission("sh2.create-home")){
+            ChatUtils.invalidPermissions(player);
+            return false;
+        }
+
         // Guard to ensure we have minimum number of args
         if (args.length < 1) {
             ChatUtils.incorrectNumArguments(player);

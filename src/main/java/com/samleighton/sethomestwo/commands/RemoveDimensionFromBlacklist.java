@@ -26,6 +26,12 @@ public class RemoveDimensionFromBlacklist implements CommandExecutor {
 
         Player player = (Player) commandSender;
 
+        // Permission guard
+        if(!player.hasPermission("sh2.remove-from-blacklist")){
+            ChatUtils.invalidPermissions(player);
+            return false;
+        }
+
         // Args length guard
         if (args.length < 1) {
             ChatUtils.incorrectNumArguments(player);

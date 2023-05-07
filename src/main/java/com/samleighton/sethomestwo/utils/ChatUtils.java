@@ -21,4 +21,8 @@ public class ChatUtils {
     public static void incorrectNumArguments(Player player) {
         sendError(player, "Incorrect number of arguments supplied to the command.");
     }
+
+    public static void invalidPermissions(Player player) {
+        sendError(player, "You do not have permission to perform this action.");
+    }
 }

@@ -21,6 +21,12 @@ public class DeleteHome implements CommandExecutor {
 
         Player player = (Player) commandSender;
 
+        // Permission guard
+        if(!player.hasPermission("sh2.delete-home")){
+            ChatUtils.invalidPermissions(player);
+            return false;
+        }
+
         // Args length guard
         if (args.length != 1) {
             ChatUtils.incorrectNumArguments(player);

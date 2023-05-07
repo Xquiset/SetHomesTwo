@@ -8,6 +8,7 @@ import com.samleighton.sethomestwo.enums.DebugLevel;
 import com.samleighton.sethomestwo.enums.UserError;
 import com.samleighton.sethomestwo.gui.HomesGui;
 import com.samleighton.sethomestwo.models.Home;
+import com.samleighton.sethomestwo.utils.ChatUtils;
 import com.samleighton.sethomestwo.utils.ConfigUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -36,6 +37,12 @@ public class RightClickHomeItem implements Listener {
         Action action = event.getAction();
         Material homeMaterial = Material.matchMaterial(ConfigUtil.getConfig().getString("openHomeItem", Material.COMPASS.name()));
 
+        // Permission guard
+        if(!player.hasPermission("sh2.teleport")){
+            ChatUtils.invalidPermissions(player);
+            return;
+        }
+
         // Basic item guard
         if ((action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK) || event.getItem() == null || event.getItem().getType() != homeMaterial || event.getItem().getItemMeta() == null)
             return;
@@ -63,14 +70,14 @@ public class RightClickHomeItem implements Listener {
         BlacklistConnection blacklistConnection = new BlacklistConnection();
         HomesConnection homesConnection = new HomesConnection();
         List<Home> playersHomes = homesConnection.getPlayersHomes(player.getUniqueId().toString());
-        for (int i = 0; i < playersHomes.size(); i++) {
-            String dimension = playersHomes.get(i).getDimension();
+        for (Home playersHome : playersHomes) {
+            String dimension = playersHome.getDimension();
             List<String> blacklistedDimensions = blacklistConnection.getBlacklistedDimensions();
             Map<String, String> blacklistedMap = blacklistConnection.getDimensionsMap();
 
             if (blacklistedDimensions.contains(blacklistedMap.get(dimension))) {
-                playersHomes.get(i).setDescription("Cannot teleport here: dimension blacklisted");
-                playersHomes.get(i).setCanTeleport(false);
+                playersHome.setDescription("Cannot teleport here: dimension blacklisted");
+                playersHome.setCanTeleport(false);
             }
         }
         this.homesGui.showHomes(playersHomes, player);
