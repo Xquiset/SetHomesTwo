@@ -17,6 +17,7 @@ public enum UserError {
     ALREADY_TELEPORTING("You cannot teleport while already teleporting."),
     MOVED_WHILE_TELEPORTING("Teleport has been cancelled because you have moved."),
     NO_HOMES("You have not created any homes yet. Use /create-home."),
+    MAX_HOMES("You have reached the maximum number of homes allowed."),
     PLAYERS_ONLY("Only players may execute this command.");
     private final String value;
 

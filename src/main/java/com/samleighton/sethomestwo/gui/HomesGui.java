@@ -102,6 +102,7 @@ public class HomesGui implements Listener {
         // Get the player who clicked the item.
         Player player = (Player) event.getWhoClicked();
 
+        assert home != null;
         if (!home.getCanTeleport()) {
             ChatUtils.sendError(player, ConfigUtil.getConfig().getString("teleportToBlacklistedDimension", UserError.TELEPORT_IS_BLACKLISTED.getValue()));
             player.closeInventory();
@@ -159,7 +160,6 @@ public class HomesGui implements Listener {
 
             bukkitTask.cancel();
             // This logic fires after total seconds have elapsed
-            assert home != null;
             tac.removeAttempt(player);
 
             player.teleport(home.asLocation());

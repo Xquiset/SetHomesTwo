@@ -12,6 +12,13 @@ defaultHomeItem: "white_wool"
 # players home list.
 inventoryTitle: "Your homes"
 
+# Enabled maximum number of homes.
+maxHomeEnabled: false
+# The maximum number of homes setup type.
+# Choices are: singular | groups
+maxHomesType: "singular"
+maxHomes: 8
+
 # -- TELEPORTING --
 teleportTitle: "Please stand still"
 teleportSubtitle: "You will be teleported in %d..." # You can use %d here as a placeholder for the seconds counter.
@@ -31,5 +38,8 @@ teleportedWhileTeleporting: "You cannot teleport while already teleporting."
 movedWhileTeleporting: "Teleport has been cancelled because you have moved."
 noHomes: "You have not created any homes yet. Use /create-home to make your first one."
 teleportToBlacklistedDimension: "You cannot teleport to this home because the dimension is blacklisted."
+maxHomesReached: "You have reached the maximum number of homes allowed."
+dimensionBlacklisted: "You cannot set home in this dimension because it is blacklisted."
+
 # -- DEBUGGING --
-debugLevel: "error" # Possible levels: error, info
+debugLevel: "error" # Choices are: error | info

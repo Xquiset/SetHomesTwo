@@ -1,6 +1,5 @@
 package com.samleighton.sethomestwo.connections;
 
-import com.google.common.collect.ImmutableList;
 import com.samleighton.sethomestwo.SetHomesTwo;
 import com.samleighton.sethomestwo.models.Home;
 import com.samleighton.sethomestwo.utils.DatabaseUtil;
@@ -10,8 +9,9 @@ import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class HomesConnection extends AbstractConnection {
 
@@ -159,5 +159,9 @@ public class HomesConnection extends AbstractConnection {
             playerHomesMap.add(home.getName());
         }
         return playerHomesMap;
+    }
+
+    public int getPlayersHomeCount(String playerUUID) {
+        return this.getPlayersHomes(playerUUID).size();
     }
 }

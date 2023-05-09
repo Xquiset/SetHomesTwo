@@ -1,4 +1,4 @@
-name: '${project.name}'
+name: 'SetHomesTwo'
 version: '${project.version}'
 main: com.samleighton.sethomestwo.SetHomesTwo
 api-version: 1.19
@@ -26,4 +26,4 @@ commands:
     permission: sh2.get-blacklisted-dimensions
   get-player-homes:
     description: Retrieves a list of a given player's homes
-    permission: sethomestwo.get-player-homes
+    permission: sh2.get-player-homes
