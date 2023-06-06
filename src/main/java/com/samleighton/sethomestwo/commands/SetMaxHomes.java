@@ -41,6 +41,7 @@ public class SetMaxHomes implements CommandExecutor {
         // Check if max homes is even set
         if (config.getString("maxHomes") == null) {
             ChatUtils.sendInfo(player, UserInfo.NO_MAX_HOMES.getValue());
+            return false;
         }
 
         // Depending on if grouping is singular or groups, guard against incorrect number of args
