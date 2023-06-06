@@ -5,7 +5,8 @@ public enum UserSuccess {
     HOME_DELETED("%s has been deleted successfully."),
     TELEPORTED("Teleported to %s"),
     DIMENSION_ADDED_TO_BLACKLIST("%s has been added to the blacklist"),
-    DIMENSION_REMOVED_FROM_BLACKLIST("%s has been removed from the blacklist");
+    DIMENSION_REMOVED_FROM_BLACKLIST("%s has been removed from the blacklist"),
+    MAX_HOMES_UPDATED_SUCCESSFULLY("Max homes updated successfully.");
 
     private final String value;
 

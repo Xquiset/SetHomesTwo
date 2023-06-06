@@ -27,3 +27,6 @@ commands:
   get-player-homes:
     description: Retrieves a list of a given player's homes
     permission: sh2.get-player-homes
+  set-max-homes:
+    description: Sets the max number of homes all players, or individual groups, can have
+    permission: sh2.set-max-homes

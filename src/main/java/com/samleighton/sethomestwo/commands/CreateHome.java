@@ -49,7 +49,7 @@ public class CreateHome implements CommandExecutor {
         }
 
         // Guard to check if player has exceeded the max number of homes
-        if(isMaxHomesReached(player, homesConnection)){
+        if (isMaxHomesReached(player, homesConnection)){
             String errorMessage = ConfigUtil.getConfig().getString("maxHomesReached", UserError.MAX_HOMES.getValue());
             ChatUtils.sendError(player, errorMessage);
             return false;
@@ -124,7 +124,7 @@ public class CreateHome implements CommandExecutor {
 
     public boolean isMaxHomesReached(Player player, HomesConnection homesConnection){
         boolean isMaxHomesEnabled = ConfigUtil.getConfig().getBoolean("maxHomeEnabled", false);
-        if(!isMaxHomesEnabled) return false;
+        if (!isMaxHomesEnabled) return false;
 
         String maxHomesType = ConfigUtil.getConfig().getString("maxHomesType", "singular");
         int maxHomesAllowed = -1;
@@ -140,18 +140,18 @@ public class CreateHome implements CommandExecutor {
                     maxHomesMap.put(key, ConfigUtil.getConfig().getInt("maxHomes."+key));
                 }
 
-                if(!(maxHomesMap.size() > 0)) break;
+                if (!(maxHomesMap.size() > 0)) break;
 
                 LuckPerms lpApi = LuckPermsProvider.get();
                 User user = lpApi.getUserManager().getUser(player.getUniqueId());
                 String primaryGroup = Objects.requireNonNull(user).getPrimaryGroup();
-                if(!maxHomesMap.containsKey(primaryGroup)) break;
+                if (!maxHomesMap.containsKey(primaryGroup)) break;
 
                 maxHomesAllowed = maxHomesMap.get(primaryGroup);
                 break;
         }
 
-        if(maxHomesAllowed == -1) return false;
+        if (maxHomesAllowed == -1) return false;
 
         int playersHomeCount = homesConnection.getPlayersHomeCount(player.getUniqueId().toString());
         return playersHomeCount >= maxHomesAllowed;

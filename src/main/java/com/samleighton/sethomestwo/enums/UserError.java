@@ -10,7 +10,11 @@ public enum UserError {
     REMOVE_FROM_BLACKLIST_USAGE("Usage: /remove-from-blacklist [dimension names]"),
     GET_BLACKLIST_USAGE("Usage: /get-blacklisted-dimensions"),
     GET_PLAYER_HOMES_USAGE("Usage: /get-player-homes [playerName]"),
+    SET_MAX_HOMES_SINGULAR("Max Homes Type is singular. Usage: /set-max-homes [max number of homes]"),
+    SET_MAX_HOMES_GROUPS("Max Homes Type is groups. Usage: /set-max-homes [group name] [max number of homes]"),
     PLAYER_NOT_ONLINE("The player you supplied is either not online or does not exist."),
+    ADD_DIMENSION_FAILED("There was an issue adding dimension to the blacklist."),
+    REMOVE_DIMENSION_FAILED("There was an issue removing dimension from blacklist."),
     INVALID_DIMENSION("Dimension entered is invalid. Please enter a valid dimension (nether, overworld, end)."),
     DIMENSION_IS_BLACKLISTED("You cannot set home in this dimension because it is blacklisted."),
     TELEPORT_IS_BLACKLISTED("You cannot teleport to this home because dimension is blacklisted."),
@@ -18,7 +22,9 @@ public enum UserError {
     MOVED_WHILE_TELEPORTING("Teleport has been cancelled because you have moved."),
     NO_HOMES("You have not created any homes yet. Use /create-home."),
     MAX_HOMES("You have reached the maximum number of homes allowed."),
-    PLAYERS_ONLY("Only players may execute this command.");
+    PLAYERS_ONLY("Only players may execute this command."),
+    MAX_HOMES_UPDATE_FAILED("Max homes updated failed."),
+    GROUP_DOES_NOT_EXIST("Group does not exist. Use get-max-homes-groups to see all groups.");
     private final String value;
 
     UserError(String message) {
