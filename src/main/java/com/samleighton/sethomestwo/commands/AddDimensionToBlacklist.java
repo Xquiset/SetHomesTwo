@@ -56,7 +56,7 @@ public class AddDimensionToBlacklist implements CommandExecutor {
         // Guard for successful addition of blacklist
         if (!success && ConfigUtil.getDebugLevel().equals(DebugLevel.INFO)) {
             Bukkit.getLogger().info(String.format("Failed to add dimensions to blacklist. %s", Arrays.toString(blacklistedDimensions.toArray())));
-            ChatUtils.sendError(player, "There was an issue adding dimension to the blacklist.");
+            ChatUtils.sendError(player, UserError.ADD_DIMENSION_FAILED.getValue());
             return false;
         }
         String successMessage = ConfigUtil.getConfig().getString("dimensionAddedToBlacklist", UserSuccess.DIMENSION_ADDED_TO_BLACKLIST.getValue());

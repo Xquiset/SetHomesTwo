@@ -16,6 +16,10 @@ inventoryTitle: "Your homes"
 maxHomeEnabled: false
 # The maximum number of homes setup type.
 # Choices are: singular | groups
+# Example of singular maxHomesType:
+# maxHomes: 5 where every user on server can set a max number of 5 homes
+# Example of groups maxHomeType:
+# maxHomes: {admin: 5, user: 4} where admin can have max 5 homes and user can have max 4 homes
 maxHomesType: "singular"
 maxHomes: 8
 

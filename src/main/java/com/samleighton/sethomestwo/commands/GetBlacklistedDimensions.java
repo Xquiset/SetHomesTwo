@@ -2,6 +2,7 @@ package com.samleighton.sethomestwo.commands;
 
 import com.samleighton.sethomestwo.connections.BlacklistConnection;
 import com.samleighton.sethomestwo.enums.UserError;
+import com.samleighton.sethomestwo.enums.UserInfo;
 import com.samleighton.sethomestwo.utils.ChatUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -40,7 +41,7 @@ public class GetBlacklistedDimensions implements CommandExecutor {
             String blacklist = "Blacklisted Dimensions: " + blacklistedDimensions;
             ChatUtils.sendInfo(player, blacklist);
         } else {
-            ChatUtils.sendInfo(player, "No dimensions are blacklisted");
+            ChatUtils.sendInfo(player, UserInfo.NO_BLACKLISTED_DIMENSIONS.getValue());
         }
         return false;
     }

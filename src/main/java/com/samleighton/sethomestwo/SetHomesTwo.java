@@ -111,6 +111,9 @@ public final class SetHomesTwo extends JavaPlugin {
 
         PluginCommand getPlayerHomes = Objects.requireNonNull(this.getCommand("get-player-homes"));
         getPlayerHomes.setExecutor(new GetPlayerHomes());
+
+        PluginCommand setMaxHomes = Objects.requireNonNull(this.getCommand("set-max-homes"));
+        setMaxHomes.setExecutor(new SetMaxHomes(this));
     }
 
     /**

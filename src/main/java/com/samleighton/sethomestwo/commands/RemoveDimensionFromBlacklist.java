@@ -55,7 +55,7 @@ public class RemoveDimensionFromBlacklist implements CommandExecutor {
         // Guard for successful addition of blacklist
         if (!success && ConfigUtil.getDebugLevel().equals(DebugLevel.ERROR)) {
             Bukkit.getLogger().info(String.format("Failed to remove dimensions from blacklist. %s", Arrays.toString(dimensions.toArray())));
-            ChatUtils.sendError(player, "There was an issue removing dimension from blacklist.");
+            ChatUtils.sendError(player, UserError.REMOVE_DIMENSION_FAILED.getValue());
             return false;
         }
         String successMessage = ConfigUtil.getConfig().getString("dimensionRemovedFromBlacklist", UserSuccess.DIMENSION_REMOVED_FROM_BLACKLIST.getValue());
