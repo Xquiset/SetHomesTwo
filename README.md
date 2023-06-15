@@ -1,17 +1,5 @@
-
-
-<div style="display: flex; justify-content: space-between">
-<h1 >SetHomes</h1>
-<form style="margin-top: 5%" action="https://www.paypal.com/donate" method="post" target="_top">
-<input type="hidden" name="business" value="8LXCRFX27B37C" />
-<input type="hidden" name="no_recurring" value="0" />
-<input type="hidden" name="item_name" value="Thanks for supporting sethomes plugin!" />
-<input type="hidden" name="currency_code" value="USD" />
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-</form>
-</div>
-
+### SetHomes
+[![Donate](./src/main/img/donateBtn.png)](https://www.paypal.com/donate/?business=8LXCRFX27B37C&no_recurring=0&item_name=Thanks+for+supporting+sethomes+plugin%21&currency_code=USD)
 ### Introduction
 This plugin allows players to set multiple homes across the various worlds and teleport to with ease. 
 Additionally, server admins have the ability to blacklist certain dimensions, restricting the ability to set a home in those dimensions. 
