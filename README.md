@@ -1,5 +1,5 @@
-### SetHomes
-[![Donate](./src/main/img/donateBtn.png)](https://www.paypal.com/donate/?business=8LXCRFX27B37C&no_recurring=0&item_name=Thanks+for+supporting+sethomes+plugin%21&currency_code=USD)
+# SetHomes
+
 ### Introduction
 This plugin allows players to set multiple homes across the various worlds and teleport to with ease. 
 Additionally, server admins have the ability to blacklist certain dimensions, restricting the ability to set a home in those dimensions. 
@@ -88,6 +88,10 @@ dimensionBlacklisted: "You cannot set home in this dimension because it is black
 # -- DEBUGGING --
 debugLevel: "error" # Choices are: error | info
 ```
+### Donations
+My friend and I work on this plugin with the little amount of free time that we have. Please feel free to donate via the button below, any amount is greatly appreciated. Thank you!
+
+[![Donate](./src/main/img/donateBtn.png)](https://www.paypal.com/donate/?business=8LXCRFX27B37C&no_recurring=0&item_name=Thanks+for+supporting+sethomes+plugin%21&currency_code=USD)
 
 ### Screenshots
 ![Screenshot](https://imgur.com/ucK48vf.png)
