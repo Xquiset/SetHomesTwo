@@ -91,7 +91,7 @@ debugLevel: "error" # Choices are: error | info
 ### Donations
 My friend and I work on this plugin with the little amount of free time that we have. Please feel free to donate via the button below, any amount is greatly appreciated. Thank you!
 
-[![Donate](./src/main/img/donateBtn.png)](https://www.paypal.com/donate/?business=8LXCRFX27B37C&no_recurring=0&item_name=Thanks+for+supporting+sethomes+plugin%21&currency_code=USD)
+[![Donate](./src/main/img/donateBtn.png)](https://www.paypal.com/donate/?return=https://dev.bukkit.org/projects/312833&cn=Add+special+instructions+to+the+addon+author()&business=sam%40samleighton.us&bn=PP-DonationsBF:btn_donateCC_LG.gif:NonHosted&cancel_return=https://dev.bukkit.org/projects/312833&lc=US&item_name=Set+Homes+(from+bukkit.org)&cmd=_donations&rm=1&no_shipping=1&currency_code=USD)
 
 ### Screenshots
 ![Screenshot](https://imgur.com/ucK48vf.png)
