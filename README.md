@@ -89,7 +89,7 @@ dimensionBlacklisted: "You cannot set home in this dimension because it is black
 debugLevel: "error" # Choices are: error | info
 ```
 ### Donations
-My friend and I work on this plugin with the little amount of free time that we have. Please feel free to donate via the button below, any amount is greatly appreciated. Thank you!
+Please feel free to donate via the button below, any amount is greatly appreciated. Donating will help keep this plugin up to date. Thank you!
 
 [![Donate](./src/main/img/donateBtn.png)](https://www.paypal.com/donate/?return=https://dev.bukkit.org/projects/312833&cn=Add+special+instructions+to+the+addon+author()&business=sam%40samleighton.us&bn=PP-DonationsBF:btn_donateCC_LG.gif:NonHosted&cancel_return=https://dev.bukkit.org/projects/312833&lc=US&item_name=Set+Homes+(from+bukkit.org)&cmd=_donations&rm=1&no_shipping=1&currency_code=USD)
 
