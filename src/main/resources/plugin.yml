@@ -13,20 +13,20 @@ commands:
     description: Create a new home where you are currently standing.
     permission: sh2.create-home
   delete-home:
-    description: Delete a home from your home list
+    description: Delete a home from your home list.
     permission: sh2.delete-home
   add-to-blacklist:
-    description: Add dimensions to be blacklisted from setting homes
+    description: Add dimensions to be blacklisted from setting homes.
     permission: sh2.add-to-blacklist
   remove-from-blacklist:
-    description: Remove dimensions from blacklist table
+    description: Remove dimensions from blacklist table.
     permission: sh2.remove-from-blacklist
   get-blacklisted-dimensions:
-    description: Retrieves a list of the blacklisted dimensions
+    description: Retrieves a list of the blacklisted dimensions.
     permission: sh2.get-blacklisted-dimensions
   get-player-homes:
-    description: Retrieves a list of a given player's homes
+    description: Retrieves a list of a given player's homes.
     permission: sh2.get-player-homes
   set-max-homes:
-    description: Sets the max number of homes all players, or individual groups, can have
+    description: Sets the max number of homes all players, or individual groups, can have.
     permission: sh2.set-max-homes

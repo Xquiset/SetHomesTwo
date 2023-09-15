@@ -1,4 +1,4 @@
-# SetHomes
+# Set Homes Two
 
 ### Introduction
 This plugin allows players to set multiple homes across the various worlds and teleport to with ease. 
@@ -27,7 +27,14 @@ If the plugin is set up to only have one group or tier, you only need to provide
 
 ### Permissions
 
-*coming soon*
+- `sh2.give-homes-item` - Allow player to get homes viewing/teleportation item.
+- `sh2.create-home` - Allow player to create homes.
+- `sh2.delete-home` - Allow player to delete their own homes.
+- `sh2.add-to-blacklist` - Add dimensions to blacklist table.
+- `sh2.remove-from-blacklist` - Remove dimensions from blacklist table.
+- `sh2.get-blacklist-dimensions` - Retrieve a list of the blacklisted dimensions.
+- `sh2.get-player-homes` - Retrieve a list of a given player's homes.
+- `sh2.set-max-homes` - Set the max number of homes all players, or individual groups, can have.
 
 ### Extra Features
 - The time it takes to teleport to a saved home can be configured
