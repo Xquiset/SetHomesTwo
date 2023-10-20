@@ -37,12 +37,6 @@ public class RightClickHomeItem implements Listener {
         Action action = event.getAction();
         Material homeMaterial = Material.matchMaterial(ConfigUtil.getConfig().getString("openHomeItem", Material.COMPASS.name()));
 
-        // Permission guard
-        if(!player.hasPermission("sh2.teleport")){
-            ChatUtils.invalidPermissions(player);
-            return;
-        }
-
         // Basic item guard
         if ((action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK) || event.getItem() == null || event.getItem().getType() != homeMaterial || event.getItem().getItemMeta() == null)
             return;
@@ -56,6 +50,12 @@ public class RightClickHomeItem implements Listener {
         // Guard checking if item is a home item specifically
         if (!(itemDataContainer.has(playerKey, new PersistentString()) && itemDataContainer.has(homeKey, new PersistentString())))
             return;
+
+        // Permission guard
+        if(!player.hasPermission("sh2.teleport")){
+            ChatUtils.invalidPermissions(player);
+            return;
+        }
 
         String playerUUID = itemDataContainer.get(playerKey, new PersistentString());
         String homeItemUUID = itemDataContainer.get(homeKey, new PersistentString());

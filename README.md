@@ -42,7 +42,7 @@ If the plugin is set up to only have one group or tier, you only need to provide
 - Server admins can configure what the default item is for saved home's icon
 
 ### Example Config
-```yaml
+~~~yaml
 # -- HOMES --
 # The item the player will use when
 # right-clicking to open the homes list.
@@ -94,7 +94,8 @@ dimensionBlacklisted: "You cannot set home in this dimension because it is black
 
 # -- DEBUGGING --
 debugLevel: "error" # Choices are: error | info
-```
+~~~
+
 ### Donations
 Please feel free to donate via the button below, any amount is greatly appreciated. Donating will help keep this plugin up to date. Thank you!
 
