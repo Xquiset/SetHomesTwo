@@ -13,14 +13,14 @@ import java.util.Map;
 
 public class BlacklistConnection extends AbstractConnection {
     private final String tableName = "blacklist";
-    private final List<String> validDimensions = new ArrayList<String>() {
+    private final List<String> validDimensions = new ArrayList<>() {
         {
             Bukkit.getWorlds().forEach(world -> add(world.getName().toLowerCase()));
         }
     };
 
     // Mapping the environment grabbed from player to our valid dimension list
-    private final Map<String, String> dimensionsMap = new HashMap<String, String>() {{
+    private final Map<String, String> dimensionsMap = new HashMap<>() {{
         put("NORMAL", validDimensions.get(0));
         put("NETHER", validDimensions.get(1));
         put("THE_END", validDimensions.get(2));
@@ -102,7 +102,6 @@ public class BlacklistConnection extends AbstractConnection {
             }
         } catch (SQLException e) {
             Bukkit.getLogger().severe("There was an issue retrieving blacklisted dimensions");
-            e.printStackTrace();
         }
 
         return blacklistedDimensions;

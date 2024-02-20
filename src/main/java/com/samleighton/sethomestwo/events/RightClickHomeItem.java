@@ -29,7 +29,11 @@ import java.util.Objects;
 
 public class RightClickHomeItem implements Listener {
 
-    private final HomesGui homesGui = new HomesGui();
+    private final SetHomesTwo plugin;
+
+    public RightClickHomeItem(SetHomesTwo plugin){
+        this.plugin = plugin;
+    }
 
     @EventHandler
     public void onPlayerRightClickHomeItem(PlayerInteractEvent event) {
@@ -80,7 +84,9 @@ public class RightClickHomeItem implements Listener {
                 playersHome.setCanTeleport(false);
             }
         }
-        this.homesGui.showHomes(playersHomes, player);
+
+        HomesGui homesGui = plugin.getHomesGuiMap().get(player.getUniqueId());
+        homesGui.showHomes(playersHomes, player);
 
         if (ConfigUtil.getDebugLevel().equals(DebugLevel.INFO))
             Bukkit.getLogger().info(String.format("%s has clicked with home item id %s", player.getDisplayName(), homeItemUUID));
@@ -88,11 +94,13 @@ public class RightClickHomeItem implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        this.homesGui.onInventoryClick(event);
+        HomesGui homesGui = plugin.getHomesGuiMap().get(event.getWhoClicked().getUniqueId());
+        homesGui.onInventoryClick(event);
     }
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
-        this.homesGui.onInventoryDrag(event);
+        HomesGui homesGui = plugin.getHomesGuiMap().get(event.getWhoClicked().getUniqueId());
+        homesGui.onInventoryDrag(event);
     }
 }

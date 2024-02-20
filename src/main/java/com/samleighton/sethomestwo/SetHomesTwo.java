@@ -8,24 +8,28 @@ import com.samleighton.sethomestwo.connections.TeleportationAttemptsConnection;
 import com.samleighton.sethomestwo.enums.DebugLevel;
 import com.samleighton.sethomestwo.events.PlayerMoveWhileTeleporting;
 import com.samleighton.sethomestwo.events.RightClickHomeItem;
+import com.samleighton.sethomestwo.gui.HomesGui;
 import com.samleighton.sethomestwo.tabcompleters.DimensionTabCompleter;
 import com.samleighton.sethomestwo.tabcompleters.HomesTabCompleter;
 import com.samleighton.sethomestwo.tabcompleters.MaterialsTabCompleter;
 import com.samleighton.sethomestwo.tabcompleters.RemoveDimensionTabCompleter;
 import com.samleighton.sethomestwo.utils.ConfigUtil;
-import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
-public final class SetHomesTwo extends JavaPlugin {
+public class SetHomesTwo extends JavaPlugin {
     private final ConnectionManager connectionManager = new ConnectionManager();
+    private final Map<UUID, HomesGui> homesGuiMap = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -67,20 +71,23 @@ public final class SetHomesTwo extends JavaPlugin {
      */
     public void initConfig() {
         File outputConfig = new File(getDataFolder(), "config.yml");
+        if(outputConfig.exists()) return;
 
-        try (InputStream defaultConfig = this.getResource("default-config.yml")) {
-            if (outputConfig.exists()) return;
-            if (!outputConfig.createNewFile()) return;
-
-            try (FileWriter fileWriter = new FileWriter(outputConfig)) {
-                assert defaultConfig != null;
-                IOUtils.copy(defaultConfig, fileWriter);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try{
+            if(!outputConfig.createNewFile()) return;
         } catch (IOException e) {
-            Bukkit.getLogger().severe("There was an issue creating the default config file.");
-            e.printStackTrace();
+            Bukkit.getLogger().info("Could not create config file!");
+        }
+
+        InputStream is = this.getResource("default-config.yml");
+        if(is == null) return;
+
+        try{
+            byte[] buffer = new byte[is.available()];
+            is.read(buffer);
+            Files.write(outputConfig.toPath(), buffer);
+        } catch (IOException e) {
+            Bukkit.getLogger().info("There was an issue copying data to config.yml");
         }
     }
 
@@ -120,7 +127,7 @@ public final class SetHomesTwo extends JavaPlugin {
      * Register all event listeners for the plugin
      */
     public void registerEventListeners() {
-        getServer().getPluginManager().registerEvents(new RightClickHomeItem(), this);
+        getServer().getPluginManager().registerEvents(new RightClickHomeItem(this), this);
         getServer().getPluginManager().registerEvents(new PlayerMoveWhileTeleporting(), this);
     }
 
@@ -150,5 +157,9 @@ public final class SetHomesTwo extends JavaPlugin {
      */
     public ConnectionManager getConnectionManager() {
         return this.connectionManager;
+    }
+
+    public Map<UUID, HomesGui> getHomesGuiMap() {
+        return homesGuiMap;
     }
 }

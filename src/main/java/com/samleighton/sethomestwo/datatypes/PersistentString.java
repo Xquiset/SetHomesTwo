@@ -1,6 +1,6 @@
 package com.samleighton.sethomestwo.datatypes;
 
-import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;

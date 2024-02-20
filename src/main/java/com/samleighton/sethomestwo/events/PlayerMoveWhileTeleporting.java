@@ -10,7 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 public class PlayerMoveWhileTeleporting implements Listener {
-
     @EventHandler
     public void onPlayerMoveWhileTeleporting(PlayerMoveEvent event) {
         // Skip cancel on move check

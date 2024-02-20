@@ -26,13 +26,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class HomesGui implements Listener {
     private final Inventory inv;
 
-    public HomesGui() {
+    public HomesGui(Player player) {
         String title = ConfigUtil.getConfig().getString("inventoryTitle", "Your homes");
-        inv = Bukkit.createInventory(null, 54, title);
+        inv = Bukkit.createInventory(player, 54, title);
     }
 
     /**
@@ -41,7 +42,7 @@ public class HomesGui implements Listener {
     public void showHomes(@NotNull List<Home> homes, Player player) {
         inv.clear();
 
-        if (homes.size() < 1) {
+        if (homes.isEmpty()) {
             String noHomesError = ConfigUtil.getConfig().getString("noHomes", UserError.NO_HOMES.getValue());
             ChatUtils.sendError(player, noHomesError);
             return;
@@ -127,7 +128,8 @@ public class HomesGui implements Listener {
 
         // Send player countdown title.
         Plugin plugin = SetHomesTwo.getPlugin(SetHomesTwo.class);
-        int[] seconds = {ConfigUtil.getConfig().getInt("delay", 3)};
+        AtomicInteger seconds = new AtomicInteger(ConfigUtil.getConfig().getInt("delay"));
+
         // Schedule repeating task for every second
         plugin.getServer().getScheduler().runTaskTimer(plugin, bukkitTask -> {
             // Guard to check if task has been cancelled.
@@ -148,13 +150,13 @@ public class HomesGui implements Listener {
             }
 
             // This logic repeats until the time has expired.
-            if (seconds[0] > 0) {
+            if (seconds.get() > 0) {
                 String title = ConfigUtil.getConfig().getString("teleportTitle", "Please stand still");
                 String subtitle = ConfigUtil.getConfig().getString("teleportSubtitle", "You will be teleported in %d...");
-                player.sendTitle(ChatColor.GOLD + title, String.format(subtitle, seconds[0]), 0, 999, 0);
+                player.sendTitle(ChatColor.GOLD + title, String.format(subtitle, seconds.get()), 0, 999, 0);
                 player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 999, 0 , true));
                 player.playNote(player.getLocation(), Instrument.DIDGERIDOO, Note.sharp(2, Note.Tone.F));
-                seconds[0]--;
+                seconds.decrementAndGet();
                 return;
             }
 
