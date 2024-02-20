@@ -6,6 +6,8 @@ import com.samleighton.sethomestwo.connections.ConnectionManager;
 import com.samleighton.sethomestwo.connections.HomesConnection;
 import com.samleighton.sethomestwo.connections.TeleportationAttemptsConnection;
 import com.samleighton.sethomestwo.enums.DebugLevel;
+import com.samleighton.sethomestwo.events.PlayerJoin;
+import com.samleighton.sethomestwo.events.PlayerLeave;
 import com.samleighton.sethomestwo.events.PlayerMoveWhileTeleporting;
 import com.samleighton.sethomestwo.events.RightClickHomeItem;
 import com.samleighton.sethomestwo.gui.HomesGui;
@@ -127,6 +129,8 @@ public class SetHomesTwo extends JavaPlugin {
      * Register all event listeners for the plugin
      */
     public void registerEventListeners() {
+        getServer().getPluginManager().registerEvents(new PlayerJoin(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerLeave(this), this);
         getServer().getPluginManager().registerEvents(new RightClickHomeItem(this), this);
         getServer().getPluginManager().registerEvents(new PlayerMoveWhileTeleporting(), this);
     }
@@ -160,6 +164,6 @@ public class SetHomesTwo extends JavaPlugin {
     }
 
     public Map<UUID, HomesGui> getHomesGuiMap() {
-        return homesGuiMap;
+        return this.homesGuiMap;
     }
 }
