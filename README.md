@@ -112,3 +112,5 @@ Please feel free to donate via the button below, any amount is greatly appreciat
   **A:** You will need to install the permission plugin, [LuckPerms](https://luckperms.net/download) then configure the config.yml to allow for multiple groups (see above for example config).
 
 ### Changelog
+- Fixed issue where players missing sh2.teleport could not break blocks.
+- Fixed issue where a player who has a open homes gui has their inventory overwritten by the next person to open a homes gui.
