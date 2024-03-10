@@ -30,6 +30,7 @@ If the plugin is set up to only have one group or tier, you only need to provide
 - `sh2.give-homes-item` - Allow player to get homes viewing/teleportation item.
 - `sh2.create-home` - Allow player to create homes.
 - `sh2.delete-home` - Allow player to delete their own homes.
+- `sh2.teleport` - Allow player to teleport to created homes.
 - `sh2.add-to-blacklist` - Add dimensions to blacklist table.
 - `sh2.remove-from-blacklist` - Remove dimensions from blacklist table.
 - `sh2.get-blacklist-dimensions` - Retrieve a list of the blacklisted dimensions.
