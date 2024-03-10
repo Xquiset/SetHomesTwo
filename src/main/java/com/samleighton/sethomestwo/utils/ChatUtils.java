@@ -25,4 +25,8 @@ public class ChatUtils {
     public static void invalidPermissions(Player player) {
         sendError(player, "You do not have permission to perform this action.");
     }
+
+    public static void pluginError(Player player){
+        sendError(player, "An error was encountered while performing this actions. Please contact server administrators.");
+    }
 }

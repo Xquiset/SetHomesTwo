@@ -1,11 +1,14 @@
 package com.samleighton.sethomestwo.commands;
 
-import com.samleighton.sethomestwo.connections.BlacklistConnection;
+import com.samleighton.sethomestwo.dao.BlacklistDao;
+import com.samleighton.sethomestwo.dao.Dao;
 import com.samleighton.sethomestwo.enums.DebugLevel;
 import com.samleighton.sethomestwo.enums.UserError;
+import com.samleighton.sethomestwo.enums.UserInfo;
 import com.samleighton.sethomestwo.enums.UserSuccess;
 import com.samleighton.sethomestwo.utils.ChatUtils;
 import com.samleighton.sethomestwo.utils.ConfigUtil;
+import com.samleighton.sethomestwo.utils.ServerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,8 +16,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class AddDimensionToBlacklist implements CommandExecutor {
@@ -36,39 +37,33 @@ public class AddDimensionToBlacklist implements CommandExecutor {
         // Args length guard
         if (args.length < 1) {
             ChatUtils.incorrectNumArguments(player);
-            ChatUtils.sendInfo(player, UserError.ADD_TO_BLACKLIST_USAGE.getValue());
+            ChatUtils.sendInfo(player, UserInfo.ADD_TO_BLACKLIST_USAGE.getValue());
             return false;
         }
 
-        BlacklistConnection blacklistConnection = new BlacklistConnection();
-        List<String> blacklistedDimensions = new ArrayList<>();
+        Dao<String> blacklistDao = new BlacklistDao();
+        List<String> blacklistedDimensions = blacklistDao.getAll();
 
         for (String dimension : args) {
-            if (!blacklistConnection.getValidDimensions().contains(dimension)) {
-                ChatUtils.sendError(player, UserError.INVALID_DIMENSION.getValue());
+            if (!ServerUtil.getValidDimensions().contains(dimension)) {
+                ChatUtils.sendError(player, String.format(UserError.INVALID_DIMENSION.getValue(), dimension));
                 continue;
             }
 
-            blacklistedDimensions.add(dimension);
+            if(blacklistedDimensions.contains(dimension)) {
+                ChatUtils.sendError(player, String.format(UserError.DIMENSION_ALREADY_BLACKLISTED.getValue(), dimension));
+                continue;
+            }
+
+            boolean success = blacklistDao.save(dimension);
+            // Successful addition of blacklist guard
+            if (!success && ConfigUtil.getDebugLevel().equals(DebugLevel.INFO)) {
+                Bukkit.getLogger().info(String.format("Failed to add dimension to blacklist. %s", dimension));
+            }
+
+            ChatUtils.sendSuccess(player, String.format(UserSuccess.DIMENSION_ADDED_TO_BLACKLIST.getValue(), dimension));
         }
 
-        boolean success = blacklistConnection.addToBlacklistTable(blacklistedDimensions);
-        // Guard for successful addition of blacklist
-        if (!success && ConfigUtil.getDebugLevel().equals(DebugLevel.INFO)) {
-            Bukkit.getLogger().info(String.format("Failed to add dimensions to blacklist. %s", Arrays.toString(blacklistedDimensions.toArray())));
-            ChatUtils.sendError(player, UserError.ADD_DIMENSION_FAILED.getValue());
-            return false;
-        }
-        String successMessage = ConfigUtil.getConfig().getString("dimensionAddedToBlacklist", UserSuccess.DIMENSION_ADDED_TO_BLACKLIST.getValue());
-        StringBuilder stringBuilder = new StringBuilder();
-
-        // Build comma sep list of added dimensions
-        for(String dimension : blacklistedDimensions) {
-            stringBuilder.append(dimension).append(", ");
-        }
-
-        String dimensionList = stringBuilder.substring(0, stringBuilder.length() - 2);
-        ChatUtils.sendSuccess(player, String.format(successMessage, dimensionList));
         return false;
     }
 }

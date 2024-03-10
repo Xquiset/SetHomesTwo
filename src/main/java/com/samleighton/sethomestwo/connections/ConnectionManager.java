@@ -34,7 +34,6 @@ public class ConnectionManager {
             return true;
         } catch (SQLException e) {
             Bukkit.getLogger().severe(String.format("There was an issue creating the database %s", dbName));
-            e.printStackTrace();
         }
 
         return false;
@@ -51,7 +50,6 @@ public class ConnectionManager {
                 conn.close();
             } catch (SQLException e) {
                 Bukkit.getLogger().severe("There was an issue closing a database connection.");
-                e.printStackTrace();
             }
         }
     }

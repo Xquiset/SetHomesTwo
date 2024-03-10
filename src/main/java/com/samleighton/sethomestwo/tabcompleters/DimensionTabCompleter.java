@@ -1,6 +1,6 @@
 package com.samleighton.sethomestwo.tabcompleters;
 
-import com.samleighton.sethomestwo.connections.BlacklistConnection;
+import com.samleighton.sethomestwo.utils.ServerUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -17,7 +17,7 @@ public class DimensionTabCompleter implements TabCompleter {
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         List<String> completions = new ArrayList<>();
         for(String arg : args){
-            StringUtil.copyPartialMatches(arg, new BlacklistConnection().getValidDimensions(), completions);
+            StringUtil.copyPartialMatches(arg, ServerUtil.getValidDimensions(), completions);
         }
 
         return completions;

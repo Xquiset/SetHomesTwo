@@ -1,11 +1,16 @@
 package com.samleighton.sethomestwo.commands;
 
-import com.samleighton.sethomestwo.connections.BlacklistConnection;
-import com.samleighton.sethomestwo.connections.HomesConnection;
+import com.samleighton.sethomestwo.dao.BlacklistDao;
+import com.samleighton.sethomestwo.dao.Dao;
+import com.samleighton.sethomestwo.dao.HomesDao;
 import com.samleighton.sethomestwo.enums.UserError;
+import com.samleighton.sethomestwo.enums.UserInfo;
 import com.samleighton.sethomestwo.enums.UserSuccess;
+import com.samleighton.sethomestwo.models.Home;
 import com.samleighton.sethomestwo.utils.ChatUtils;
 import com.samleighton.sethomestwo.utils.ConfigUtil;
+import com.samleighton.sethomestwo.utils.HomesUtil;
+import com.samleighton.sethomestwo.utils.ServerUtil;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
@@ -33,7 +38,7 @@ public class CreateHome implements CommandExecutor {
 
         Player player = (Player) commandSender;
         Location playerLocation = player.getLocation();
-        HomesConnection homesConnection = new HomesConnection();
+        Dao<Home> homesDao = new HomesDao();
 
         // Permission guard
         if(!player.hasPermission("sh2.create-home")){
@@ -44,22 +49,22 @@ public class CreateHome implements CommandExecutor {
         // Guard to ensure we have minimum number of args
         if (args.length < 1) {
             ChatUtils.incorrectNumArguments(player);
-            ChatUtils.sendInfo(player, UserError.CREATE_HOME_USAGE.getValue());
+            ChatUtils.sendInfo(player, UserInfo.CREATE_HOME_USAGE.getValue());
             return false;
         }
 
         // Guard to check if player has exceeded the max number of homes
-        if (isMaxHomesReached(player, homesConnection)){
+        if (isMaxHomesReached(player, homesDao)){
             String errorMessage = ConfigUtil.getConfig().getString("maxHomesReached", UserError.MAX_HOMES.getValue());
             ChatUtils.sendError(player, errorMessage);
             return false;
         }
 
         // Grab list of blacklisted dimensions, dimension player is in, and dimensions map
-        BlacklistConnection blacklistConnection = new BlacklistConnection();
-        List<String> blacklistedDimensions = blacklistConnection.getBlacklistedDimensions();
+        Dao<String> blacklistDao = new BlacklistDao();
+        List<String> blacklistedDimensions = blacklistDao.getAll();
+        Map<String, String> dimensionsMap = ServerUtil.getDimensionsMap();
         String playerDimension = player.getWorld().getEnvironment().toString();
-        Map<String, String> dimensionsMap = blacklistConnection.getDimensionsMap();
 
         // Check if player is in a blacklisted dimension before creating home
         if (blacklistedDimensions.contains(dimensionsMap.get(playerDimension))) {
@@ -109,7 +114,14 @@ public class CreateHome implements CommandExecutor {
         }
 
         // Create the home
-        boolean created = homesConnection.createNewHome(player.getUniqueId().toString(), material, playerLocation, homeName, description, player.getWorld().getEnvironment().toString());
+        boolean created = homesDao.save(new Home(
+                player.getUniqueId().toString(),
+                material,
+                playerLocation,
+                homeName,
+                description,
+                playerDimension
+        ));
 
         if (!created) {
             Bukkit.getLogger().severe(String.format("Failed to create home for player %s in the database.", player.getUniqueId()));
@@ -122,7 +134,7 @@ public class CreateHome implements CommandExecutor {
         return false;
     }
 
-    public boolean isMaxHomesReached(Player player, HomesConnection homesConnection){
+    public boolean isMaxHomesReached(Player player, Dao<Home> homesDao){
         boolean isMaxHomesEnabled = ConfigUtil.getConfig().getBoolean("maxHomeEnabled", false);
         if (!isMaxHomesEnabled) return false;
 
@@ -140,7 +152,7 @@ public class CreateHome implements CommandExecutor {
                     maxHomesMap.put(key, ConfigUtil.getConfig().getInt("maxHomes."+key));
                 }
 
-                if (!(maxHomesMap.size() > 0)) break;
+                if (maxHomesMap.isEmpty()) break;
 
                 LuckPerms lpApi = LuckPermsProvider.get();
                 User user = lpApi.getUserManager().getUser(player.getUniqueId());
@@ -153,7 +165,7 @@ public class CreateHome implements CommandExecutor {
 
         if (maxHomesAllowed == -1) return false;
 
-        int playersHomeCount = homesConnection.getPlayersHomeCount(player.getUniqueId().toString());
+        int playersHomeCount = HomesUtil.getPlayerHomesCount(homesDao, player.getUniqueId());
         return playersHomeCount >= maxHomesAllowed;
     }
 }

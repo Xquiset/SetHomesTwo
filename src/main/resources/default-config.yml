@@ -41,11 +41,11 @@ dimensionAddedToBlacklist: "%s has been added to the blacklist." # You can use %
 invalidHomeItem: "The material you entered is not valid, please try a different one."
 falseHomeItem: "This home item does not belong to you."
 teleportedWhileTeleporting: "You cannot teleport while already teleporting."
-movedWhileTeleporting: "Teleport has been cancelled because you have moved."
+movedWhileTeleporting: "Your teleport has been cancelled because you have moved."
 noHomes: "You have not created any homes yet. Use /create-home to make your first one."
-teleportToBlacklistedDimension: "You cannot teleport to this home because the dimension is blacklisted."
+teleportToBlacklistedDimension: "You cannot teleport to this home because the dimension it is in has been blacklisted."
 maxHomesReached: "You have reached the maximum number of homes allowed."
-dimensionBlacklisted: "You cannot set home in this dimension because it is blacklisted."
+dimensionBlacklisted: "You cannot set a home in this dimension because it has been blacklisted."
 
 # -- DEBUGGING --
 debugLevel: "error" # Choices are: error | info

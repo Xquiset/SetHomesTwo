@@ -1,6 +1,7 @@
 package com.samleighton.sethomestwo.events;
 
-import com.samleighton.sethomestwo.connections.TeleportationAttemptsConnection;
+import com.samleighton.sethomestwo.dao.Dao;
+import com.samleighton.sethomestwo.dao.TeleportAttemptsDao;
 import com.samleighton.sethomestwo.enums.DebugLevel;
 import com.samleighton.sethomestwo.models.TeleportAttempt;
 import com.samleighton.sethomestwo.utils.ConfigUtil;
@@ -15,8 +16,8 @@ public class PlayerMoveWhileTeleporting implements Listener {
         // Skip cancel on move check
         if (!ConfigUtil.getConfig().getBoolean("cancelOnMove", true)) return;
 
-        TeleportationAttemptsConnection tac = new TeleportationAttemptsConnection();
-        TeleportAttempt ta = tac.getLastAttempt(event.getPlayer());
+        Dao<TeleportAttempt> teleportAttemptsDaoDao = new TeleportAttemptsDao();
+        TeleportAttempt ta = teleportAttemptsDaoDao.get(event.getPlayer());
 
         // Guard to check if player has attempted a teleport
         if (ta == null) return;

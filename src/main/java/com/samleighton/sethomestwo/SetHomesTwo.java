@@ -1,10 +1,7 @@
 package com.samleighton.sethomestwo;
 
 import com.samleighton.sethomestwo.commands.*;
-import com.samleighton.sethomestwo.connections.BlacklistConnection;
 import com.samleighton.sethomestwo.connections.ConnectionManager;
-import com.samleighton.sethomestwo.connections.HomesConnection;
-import com.samleighton.sethomestwo.connections.TeleportationAttemptsConnection;
 import com.samleighton.sethomestwo.enums.DebugLevel;
 import com.samleighton.sethomestwo.events.PlayerJoin;
 import com.samleighton.sethomestwo.events.PlayerLeave;
@@ -16,8 +13,10 @@ import com.samleighton.sethomestwo.tabcompleters.HomesTabCompleter;
 import com.samleighton.sethomestwo.tabcompleters.MaterialsTabCompleter;
 import com.samleighton.sethomestwo.tabcompleters.RemoveDimensionTabCompleter;
 import com.samleighton.sethomestwo.utils.ConfigUtil;
+import com.samleighton.sethomestwo.utils.DatabaseUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -45,15 +44,21 @@ public class SetHomesTwo extends JavaPlugin {
         registerCommands();
         registerEventListeners();
 
+        // Load online players into gui map just in case this was a reload
+        for(Player player : Bukkit.getOnlinePlayers()){
+            homesGuiMap.put(player.getUniqueId(), new HomesGui(player));
+        }
+
         // Init database connections
         boolean success = connectionManager.createConnection("homes", "homes");
         if (success) {
             if (ConfigUtil.getDebugLevel().equals(DebugLevel.INFO))
                 Bukkit.getLogger().info("Homes database connection was successful.");
 
-            new HomesConnection().init();
-            new TeleportationAttemptsConnection().init();
-            new BlacklistConnection().init();
+            boolean createdTables = DatabaseUtil.initTables(connectionManager.getConnection("homes"));
+            if (createdTables && ConfigUtil.getDebugLevel().equals(DebugLevel.INFO))
+                Bukkit.getLogger().info("Table initialization was successfully executed.");
+
         } else {
             Bukkit.getLogger().severe("Could not create database connection!");
         }
@@ -73,20 +78,24 @@ public class SetHomesTwo extends JavaPlugin {
      */
     public void initConfig() {
         File outputConfig = new File(getDataFolder(), "config.yml");
-        if(outputConfig.exists()) return;
+        if (outputConfig.exists()) return;
 
-        try{
-            if(!outputConfig.createNewFile()) return;
+        try {
+            if (!outputConfig.createNewFile()) return;
         } catch (IOException e) {
-            Bukkit.getLogger().info("Could not create config file!");
+            Bukkit.getLogger().info("Could not create output config file for initializing default config.yml!");
         }
 
         InputStream is = this.getResource("default-config.yml");
-        if(is == null) return;
+        if (is == null) return;
 
-        try{
+        try {
             byte[] buffer = new byte[is.available()];
-            is.read(buffer);
+            int bytes = is.read(buffer);
+
+            if (bytes > 0 && ConfigUtil.getDebugLevel().equals(DebugLevel.INFO))
+                Bukkit.getLogger().info("Writing default config file...");
+
             Files.write(outputConfig.toPath(), buffer);
         } catch (IOException e) {
             Bukkit.getLogger().info("There was an issue copying data to config.yml");
@@ -119,7 +128,7 @@ public class SetHomesTwo extends JavaPlugin {
         getBlacklistedDimensions.setExecutor(new GetBlacklistedDimensions());
 
         PluginCommand getPlayerHomes = Objects.requireNonNull(this.getCommand("get-player-homes"));
-        getPlayerHomes.setExecutor(new GetPlayerHomes());
+        getPlayerHomes.setExecutor(new GetPlayerHomes(this));
 
         PluginCommand setMaxHomes = Objects.requireNonNull(this.getCommand("set-max-homes"));
         setMaxHomes.setExecutor(new SetMaxHomes(this));

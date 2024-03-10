@@ -1,7 +1,8 @@
 package com.samleighton.sethomestwo.gui;
 
 import com.samleighton.sethomestwo.SetHomesTwo;
-import com.samleighton.sethomestwo.connections.TeleportationAttemptsConnection;
+import com.samleighton.sethomestwo.dao.Dao;
+import com.samleighton.sethomestwo.dao.TeleportAttemptsDao;
 import com.samleighton.sethomestwo.datatypes.PersistentHome;
 import com.samleighton.sethomestwo.enums.UserError;
 import com.samleighton.sethomestwo.enums.UserSuccess;
@@ -33,6 +34,10 @@ public class HomesGui implements Listener {
 
     public HomesGui(Player player) {
         String title = ConfigUtil.getConfig().getString("inventoryTitle", "Your homes");
+        inv = Bukkit.createInventory(player, 54, title);
+    }
+
+    public HomesGui(Player player, String title){
         inv = Bukkit.createInventory(player, 54, title);
     }
 
@@ -92,30 +97,34 @@ public class HomesGui implements Listener {
         event.setCancelled(true);
 
         ItemStack clickedItem = event.getCurrentItem();
+        NamespacedKey homeKey = new NamespacedKey(SetHomesTwo.getPlugin(SetHomesTwo.class), "home");
+
         // Guard for user actually clicking item.
         if (clickedItem == null || clickedItem.getType().isAir() || clickedItem.getItemMeta() == null) return;
 
-        ItemMeta clickedItemMeta = clickedItem.getItemMeta();
-        NamespacedKey homeKey = new NamespacedKey(SetHomesTwo.getPlugin(SetHomesTwo.class), "home");
-
-        // Get the home from the clicked item
-        Home home = clickedItemMeta.getPersistentDataContainer().get(homeKey, new PersistentHome());
-        // Get the player who clicked the item.
-        Player player = (Player) event.getWhoClicked();
-
-        assert home != null;
-        if (!home.getCanTeleport()) {
-            ChatUtils.sendError(player, ConfigUtil.getConfig().getString("teleportToBlacklistedDimension", UserError.TELEPORT_IS_BLACKLISTED.getValue()));
-            player.closeInventory();
-            return;
-        }
         // Guard to check if item is actually home destination
         if (!clickedItem.getItemMeta().getPersistentDataContainer().has(homeKey, new PersistentHome())) return;
 
+        ItemMeta clickedItemMeta = clickedItem.getItemMeta();
+
+        // Attempt to get the home from the clicked item
+        Home home = clickedItemMeta.getPersistentDataContainer().get(homeKey, new PersistentHome());
+
+        // The home object was not retrievable via item meta
+        if(home == null) return;
+
+        // Get the player who clicked the item.
+        Player player = (Player) event.getWhoClicked();
         player.closeInventory();
 
-        TeleportationAttemptsConnection tac = new TeleportationAttemptsConnection();
-        boolean isAlreadyTeleporting = tac.getLastAttempt(player) != null;
+        // Home is blacklisted guard
+        if(!home.getCanTeleport()) {
+            ChatUtils.sendError(player, ConfigUtil.getConfig().getString("teleportToBlacklistedDimension", UserError.TELEPORT_IS_BLACKLISTED.getValue()));
+            return;
+        }
+
+        Dao<TeleportAttempt> teleportAttemptsDao = new TeleportAttemptsDao();
+        boolean isAlreadyTeleporting = teleportAttemptsDao.get(player) != null;
 
         // Guard to check if player is currently teleporting
         if (isAlreadyTeleporting) {
@@ -124,7 +133,7 @@ public class HomesGui implements Listener {
         }
 
         // Track player teleport attempt
-        tac.createAttempt(new TeleportAttempt(player, player.getLocation()));
+        teleportAttemptsDao.save(new TeleportAttempt(player, player.getLocation()));
 
         // Send player countdown title.
         Plugin plugin = SetHomesTwo.getPlugin(SetHomesTwo.class);
@@ -136,12 +145,12 @@ public class HomesGui implements Listener {
             if(bukkitTask.isCancelled()) return;
 
             // Guard if the player has moved
-            TeleportAttempt currAttempt = tac.getLastAttempt(player);
+            TeleportAttempt currAttempt = teleportAttemptsDao.get(player);
             if (currAttempt != null) {
                 if (!currAttempt.canTeleport()) {
                     ChatUtils.sendError(player, ConfigUtil.getConfig().getString("movedWhileTeleporting", UserError.MOVED_WHILE_TELEPORTING.getValue()));
                     player.playSound(player, Sound.ENTITY_PLAYER_BIG_FALL, 5f, 5f);
-                    tac.removeAttempt(player);
+                    teleportAttemptsDao.delete(player.getUniqueId());
                     player.resetTitle();
                     player.removePotionEffect(PotionEffectType.CONFUSION);
                     bukkitTask.cancel();
@@ -162,7 +171,7 @@ public class HomesGui implements Listener {
 
             bukkitTask.cancel();
             // This logic fires after total seconds have elapsed
-            tac.removeAttempt(player);
+            teleportAttemptsDao.delete(player.getUniqueId());
 
             player.teleport(home.asLocation());
             player.removePotionEffect(PotionEffectType.CONFUSION);

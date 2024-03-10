@@ -1,18 +1,17 @@
 package com.samleighton.sethomestwo.commands;
 
-import com.samleighton.sethomestwo.connections.HomesConnection;
+import com.samleighton.sethomestwo.enums.PluginError;
 import com.samleighton.sethomestwo.enums.UserError;
 import com.samleighton.sethomestwo.enums.UserInfo;
 import com.samleighton.sethomestwo.enums.UserSuccess;
 import com.samleighton.sethomestwo.utils.ChatUtils;
-import com.samleighton.sethomestwo.utils.ConfigUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -77,8 +76,8 @@ public class SetMaxHomes implements CommandExecutor {
             config.save(configFile);
             ChatUtils.sendSuccess(player, UserSuccess.MAX_HOMES_UPDATED_SUCCESSFULLY.getValue());
         } catch (IOException e) {
-            ChatUtils.sendError(player, UserError.MAX_HOMES_UPDATE_FAILED.getValue());
-            e.printStackTrace();
+            ChatUtils.sendError(player, PluginError.MAX_HOMES_UPDATE_FAILED.getValue());
+            Bukkit.getLogger().severe("Error writing to config file while updating max homes settings!");
         }
 
         return false;

@@ -1,10 +1,13 @@
 package com.samleighton.sethomestwo.commands;
 
-import com.samleighton.sethomestwo.connections.HomesConnection;
+import com.samleighton.sethomestwo.dao.Dao;
+import com.samleighton.sethomestwo.dao.HomesDao;
 import com.samleighton.sethomestwo.enums.UserError;
 import com.samleighton.sethomestwo.enums.UserSuccess;
+import com.samleighton.sethomestwo.models.Home;
 import com.samleighton.sethomestwo.utils.ChatUtils;
 import com.samleighton.sethomestwo.utils.ConfigUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,14 +38,21 @@ public class DeleteHome implements CommandExecutor {
         }
 
         String homeName = args[0];
-        String playerUUID = player.getUniqueId().toString();
+        Dao<Home> homesDao = new HomesDao();
+        Home home = homesDao.get(player.getUniqueId(), homeName);
 
-        HomesConnection homesConnection = new HomesConnection();
-        boolean success = homesConnection.deleteHome(playerUUID, homeName);
+        // Home does not exist guard
+        if(home == null){
+            ChatUtils.sendError(player, String.format("You do not have a home by the name %s", homeName));
+            return false;
+        }
+
+        boolean success = homesDao.delete(home);
 
         // Guard for successful home deletion
         if (!success) {
-            ChatUtils.sendError(player, String.format("You do not have a home by the name %s", homeName));
+            Bukkit.getLogger().info("An error was encountered while attempting to delete a home from the database.");
+            ChatUtils.pluginError(player);
             return false;
         }
 

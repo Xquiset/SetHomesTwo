@@ -1,8 +1,8 @@
 package com.samleighton.sethomestwo.events;
 
 import com.samleighton.sethomestwo.SetHomesTwo;
-import com.samleighton.sethomestwo.connections.BlacklistConnection;
-import com.samleighton.sethomestwo.connections.HomesConnection;
+import com.samleighton.sethomestwo.dao.Dao;
+import com.samleighton.sethomestwo.dao.HomesDao;
 import com.samleighton.sethomestwo.datatypes.PersistentString;
 import com.samleighton.sethomestwo.enums.DebugLevel;
 import com.samleighton.sethomestwo.enums.UserError;
@@ -24,14 +24,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class RightClickHomeItem implements Listener {
 
     private final SetHomesTwo plugin;
 
-    public RightClickHomeItem(SetHomesTwo plugin){
+    public RightClickHomeItem(SetHomesTwo plugin) {
         this.plugin = plugin;
     }
 
@@ -56,7 +55,7 @@ public class RightClickHomeItem implements Listener {
             return;
 
         // Permission guard
-        if(!player.hasPermission("sh2.teleport")){
+        if (!player.hasPermission("sh2.teleport")) {
             ChatUtils.invalidPermissions(player);
             return;
         }
@@ -71,19 +70,8 @@ public class RightClickHomeItem implements Listener {
             return;
         }
 
-        BlacklistConnection blacklistConnection = new BlacklistConnection();
-        HomesConnection homesConnection = new HomesConnection();
-        List<Home> playersHomes = homesConnection.getPlayersHomes(player.getUniqueId().toString());
-        for (Home playersHome : playersHomes) {
-            String dimension = playersHome.getDimension();
-            List<String> blacklistedDimensions = blacklistConnection.getBlacklistedDimensions();
-            Map<String, String> blacklistedMap = blacklistConnection.getDimensionsMap();
-
-            if (blacklistedDimensions.contains(blacklistedMap.get(dimension))) {
-                playersHome.setDescription("Cannot teleport here: dimension blacklisted");
-                playersHome.setCanTeleport(false);
-            }
-        }
+        Dao<Home> homesDao = new HomesDao();
+        List<Home> playersHomes = homesDao.getAll(player.getUniqueId());
 
         HomesGui homesGui = plugin.getHomesGuiMap().get(player.getUniqueId());
         homesGui.showHomes(playersHomes, player);

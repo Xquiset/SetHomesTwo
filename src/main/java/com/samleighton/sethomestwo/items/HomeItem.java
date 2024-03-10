@@ -20,7 +20,7 @@ public class HomeItem extends ItemStack implements Serializable {
 
     public HomeItem(Player player) {
         // Instantiate the base item
-        super(Objects.requireNonNull(Material.matchMaterial(ConfigUtil.getConfig().getString("openHomeItem", "white_wool"))), 1);
+        super(Objects.requireNonNull(Material.matchMaterial(ConfigUtil.getConfig().getString("openHomeItem", Material.COMPASS.name()))), 1);
 
         // Setup item UUID and player
         setHomeItemUUID(UUID.randomUUID());

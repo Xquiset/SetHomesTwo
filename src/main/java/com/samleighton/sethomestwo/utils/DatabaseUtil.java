@@ -9,6 +9,47 @@ import java.util.List;
 
 public class DatabaseUtil {
 
+    public static boolean initTables(Connection connection){
+        if(connection == null) return false;
+
+        // Create players_homes table
+        String createPlayersHomesSQL = "create table if not exists %s (\n" +
+                "id integer PRIMARY KEY, \n" +
+                "player_uuid TEXT NOT NULL, \n" +
+                "material TEXT NOT NULL, \n" +
+                "world TEXT NOT NULL, \n" +
+                "name TEXT NOT NULL, \n" +
+                "description TEXT, \n" +
+                "x real NOT NULL, \n" +
+                "y real NOT NULL, \n" +
+                "z real NOT NULL, \n" +
+                "pitch real NOT NULL, \n" +
+                "yaw real NOT NULL, \n" +
+                "dimension TEXT" +
+                ");";
+        boolean createPlayersHomes = execute(connection, String.format(createPlayersHomesSQL, "players_homes"));
+
+        // Create blacklist table
+        String createBlacklistSQL = "create table if not exists %s (\n" +
+                "id integer PRIMARY KEY, \n" +
+                "dimension_name TEXT NOT NULL \n" +
+                ");";
+        boolean createBlacklist = execute(connection, String.format(createBlacklistSQL, "blacklist"));
+
+        // Create player_teleport_attempts table
+        String createSQL = "create table if not exists %s (\n" +
+                "id integer PRIMARY KEY, \n" +
+                "player_uuid TEXT NOT NULL UNIQUE, \n" +
+                "world TEXT NOT NULL, \n" +
+                "x real NOT NULL, \n" +
+                "y real NOT NULL, \n" +
+                "z real NOT NULL \n" +
+                ");";
+        boolean createPlayerTeleportAttempts = execute(connection, String.format(createSQL, "player_teleport_attempts"));
+
+        return createPlayerTeleportAttempts && createBlacklist && createPlayersHomes;
+    }
+
     /**
      * Execute a query on the database.
      *
@@ -26,7 +67,6 @@ public class DatabaseUtil {
             return true;
         } catch (SQLException e) {
             Bukkit.getLogger().severe("Could not execute sql statement.");
-            e.printStackTrace();
         }
 
         return false;
@@ -48,8 +88,7 @@ public class DatabaseUtil {
 
             return statement.executeQuery();
         } catch (SQLException e) {
-            Bukkit.getLogger().severe("Could not execute sql statement.");
-            e.printStackTrace();
+            Bukkit.getLogger().severe("Could not execute sql fetch statement.");
         }
 
         return null;
@@ -81,7 +120,10 @@ public class DatabaseUtil {
             if (ConfigUtil.getDebugLevel().equals(DebugLevel.INFO))
                 Bukkit.getLogger().info("STMT: " + statement.toString());
         } catch (SQLException e) {
-            e.printStackTrace();
+            Bukkit.getLogger().severe("Could not bind parameter to SQL statement!");
+
+            if(ConfigUtil.getDebugLevel().equals(DebugLevel.INFO))
+                Bukkit.getLogger().info(e.getMessage());
         }
     }
 

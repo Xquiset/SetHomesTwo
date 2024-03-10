@@ -1,6 +1,6 @@
 package com.samleighton.sethomestwo.tabcompleters;
 
-import com.samleighton.sethomestwo.connections.BlacklistConnection;
+import com.samleighton.sethomestwo.dao.BlacklistDao;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -18,7 +18,7 @@ public class RemoveDimensionTabCompleter implements TabCompleter {
         List<String> completions = new ArrayList<>();
 
         for(String arg : args){
-            StringUtil.copyPartialMatches(arg, new BlacklistConnection().getBlacklistedDimensions(), completions);
+            StringUtil.copyPartialMatches(arg, new BlacklistDao().getAll(), completions);
         }
 
         return completions;

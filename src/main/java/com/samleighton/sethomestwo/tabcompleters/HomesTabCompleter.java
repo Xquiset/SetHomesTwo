@@ -1,7 +1,7 @@
 package com.samleighton.sethomestwo.tabcompleters;
 
-import com.samleighton.sethomestwo.connections.HomesConnection;
-import com.samleighton.sethomestwo.models.Home;
+import com.samleighton.sethomestwo.dao.HomesDao;
+import com.samleighton.sethomestwo.utils.HomesUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -23,13 +23,7 @@ public class HomesTabCompleter implements TabCompleter {
         if (!(commandSender instanceof Player)) return new ArrayList<>();
 
         Player player = (Player) commandSender;
-        HomesConnection homesConnection = new HomesConnection();
-        final List<Home> playerHomes = homesConnection.getPlayersHomes(player.getUniqueId().toString());
-        final List<String> homeNames = new ArrayList<>();
-
-        for (Home home : playerHomes) {
-            homeNames.add(home.getName());
-        }
+        List<String> homeNames = HomesUtil.getPlayerHomesNameOnly(new HomesDao(), player.getUniqueId());
 
         StringUtil.copyPartialMatches(args[0], homeNames, completions);
         return completions;

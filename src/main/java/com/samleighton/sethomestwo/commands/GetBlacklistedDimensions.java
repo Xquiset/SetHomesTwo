@@ -1,6 +1,7 @@
 package com.samleighton.sethomestwo.commands;
 
-import com.samleighton.sethomestwo.connections.BlacklistConnection;
+import com.samleighton.sethomestwo.dao.BlacklistDao;
+import com.samleighton.sethomestwo.dao.Dao;
 import com.samleighton.sethomestwo.enums.UserError;
 import com.samleighton.sethomestwo.enums.UserInfo;
 import com.samleighton.sethomestwo.utils.ChatUtils;
@@ -30,19 +31,20 @@ public class GetBlacklistedDimensions implements CommandExecutor {
         // Args length guard
         if (args.length > 0) {
             ChatUtils.incorrectNumArguments(player);
-            ChatUtils.sendInfo(player, UserError.GET_BLACKLIST_USAGE.getValue());
+            ChatUtils.sendInfo(player, UserInfo.GET_BLACKLIST_USAGE.getValue());
             return false;
         }
 
-        BlacklistConnection blacklistConnection = new BlacklistConnection();
-        List<String> blacklistedDimensions = blacklistConnection.getBlacklistedDimensions();
+        Dao<String> blacklistDao = new BlacklistDao();
+        List<String> blacklistedDimensions = blacklistDao.getAll();
 
-        if (blacklistedDimensions.size() > 0) {
-            String blacklist = "Blacklisted Dimensions: " + blacklistedDimensions;
-            ChatUtils.sendInfo(player, blacklist);
-        } else {
+        if (blacklistedDimensions.isEmpty()) {
             ChatUtils.sendInfo(player, UserInfo.NO_BLACKLISTED_DIMENSIONS.getValue());
+            return false;
         }
+
+        String blacklist = "Blacklisted Dimensions: " + blacklistedDimensions;
+        ChatUtils.sendInfo(player, blacklist);
         return false;
     }
 }
