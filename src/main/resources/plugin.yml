@@ -30,3 +30,13 @@ commands:
   set-max-homes:
     description: Sets the max number of homes all players, or individual groups, can have.
     permission: sh2.set-max-homes
+  go-home:
+    description: Allows a player to use commands to teleport to homes.
+    permission: sh2.go-home
+    aliases:
+      - home
+  list-homes:
+    description: Prints a list of the players created homes.
+    permission: sh2.list-homes
+    aliases:
+      - homes

@@ -1,16 +1,14 @@
 package com.samleighton.sethomestwo.gui;
 
 import com.samleighton.sethomestwo.SetHomesTwo;
-import com.samleighton.sethomestwo.dao.Dao;
-import com.samleighton.sethomestwo.dao.TeleportAttemptsDao;
 import com.samleighton.sethomestwo.datatypes.PersistentHome;
 import com.samleighton.sethomestwo.enums.UserError;
-import com.samleighton.sethomestwo.enums.UserSuccess;
 import com.samleighton.sethomestwo.models.Home;
-import com.samleighton.sethomestwo.models.TeleportAttempt;
 import com.samleighton.sethomestwo.utils.ChatUtils;
 import com.samleighton.sethomestwo.utils.ConfigUtil;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,15 +17,11 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class HomesGui implements Listener {
     private final Inventory inv;
@@ -117,72 +111,8 @@ public class HomesGui implements Listener {
         Player player = (Player) event.getWhoClicked();
         player.closeInventory();
 
-        // Home is blacklisted guard
-        if(!home.getCanTeleport()) {
-            ChatUtils.sendError(player, ConfigUtil.getConfig().getString("teleportToBlacklistedDimension", UserError.TELEPORT_IS_BLACKLISTED.getValue()));
-            return;
-        }
-
-        Dao<TeleportAttempt> teleportAttemptsDao = new TeleportAttemptsDao();
-        boolean isAlreadyTeleporting = teleportAttemptsDao.get(player) != null;
-
-        // Guard to check if player is currently teleporting
-        if (isAlreadyTeleporting) {
-            ChatUtils.sendError(player, ConfigUtil.getConfig().getString("teleportedWhileTeleporting", UserError.ALREADY_TELEPORTING.getValue()));
-            return;
-        }
-
-        // Track player teleport attempt
-        teleportAttemptsDao.save(new TeleportAttempt(player, player.getLocation()));
-
-        // Send player countdown title.
-        Plugin plugin = SetHomesTwo.getPlugin(SetHomesTwo.class);
-        AtomicInteger seconds = new AtomicInteger(ConfigUtil.getConfig().getInt("delay"));
-
-        // Schedule repeating task for every second
-        plugin.getServer().getScheduler().runTaskTimer(plugin, bukkitTask -> {
-            // Guard to check if task has been cancelled.
-            if(bukkitTask.isCancelled()) return;
-
-            // Guard if the player has moved
-            TeleportAttempt currAttempt = teleportAttemptsDao.get(player);
-            if (currAttempt != null) {
-                if (!currAttempt.canTeleport()) {
-                    ChatUtils.sendError(player, ConfigUtil.getConfig().getString("movedWhileTeleporting", UserError.MOVED_WHILE_TELEPORTING.getValue()));
-                    player.playSound(player, Sound.ENTITY_PLAYER_BIG_FALL, 5f, 5f);
-                    teleportAttemptsDao.delete(player.getUniqueId());
-                    player.resetTitle();
-                    player.removePotionEffect(PotionEffectType.CONFUSION);
-                    bukkitTask.cancel();
-                    return;
-                }
-            }
-
-            // This logic repeats until the time has expired.
-            if (seconds.get() > 0) {
-                String title = ConfigUtil.getConfig().getString("teleportTitle", "Please stand still");
-                String subtitle = ConfigUtil.getConfig().getString("teleportSubtitle", "You will be teleported in %d...");
-                player.sendTitle(ChatColor.GOLD + title, String.format(subtitle, seconds.get()), 0, 999, 0);
-                player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 999, 0 , true));
-                player.playNote(player.getLocation(), Instrument.DIDGERIDOO, Note.sharp(2, Note.Tone.F));
-                seconds.decrementAndGet();
-                return;
-            }
-
-            bukkitTask.cancel();
-            // This logic fires after total seconds have elapsed
-            teleportAttemptsDao.delete(player.getUniqueId());
-
-            player.teleport(home.asLocation());
-            player.removePotionEffect(PotionEffectType.CONFUSION);
-            player.resetTitle();
-            player.playNote(player.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
-            player.spawnParticle(Particle.PORTAL, player.getLocation(), 100);
-
-            String teleportSuccess = ConfigUtil.getConfig().getString("teleportSuccess", UserSuccess.TELEPORTED.getValue());
-            ChatUtils.sendSuccess(player, String.format(teleportSuccess, home.getName()));
-
-        }, 0, 20L);
+        // Teleport player to home
+        home.teleport(player);
     }
 
     // Cancel inventory dragging

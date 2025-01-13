@@ -24,7 +24,8 @@ public enum UserError {
     NO_HOMES("You have not created any homes yet. Use /create-home."),
     PLAYERS_ONLY("Only players may execute this command."),
     DIMENSION_ALREADY_BLACKLISTED("The %s dimension has already been blacklisted. You cannot add it again."),
-    GROUP_DOES_NOT_EXIST("Group does not exist. Use /get-max-homes-groups to see all groups.");
+    GROUP_DOES_NOT_EXIST("Group does not exist. Use /get-max-homes-groups to see all groups."),
+    HOME_DOES_NOT_EXIST("The home '%s' does not exist.");
 
 
     private final String value;
