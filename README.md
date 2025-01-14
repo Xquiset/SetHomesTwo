@@ -1,14 +1,15 @@
 # Set Homes Two
 
 ### Introduction
-This plugin allows players to set multiple homes across the various worlds and teleport to with ease. 
+This plugin allows players to set multiple homes, across various worlds, and then teleport to them with ease. 
 Additionally, server admins have the ability to blacklist certain dimensions, restricting the ability to set a home in those dimensions. 
 If a home has already been created in a dimension and that dimension gets blacklisted later, the player will still see the home in their inventory, but will not be able to teleport to it.
-Using the config you can control setting such as a maximum number of homes, teleport cool down, teleport delay, and their respective messages that get display to the user.
+Using the config you can control settings such as: a maximum number of homes, teleport cool down, and teleport delay. As well, all the messages sent to the user are fully customizable.
 
 ### Installation
-Simply place the downloaded jar into your server plugins folder edit the config.yml file to get set-homes set up.
-An example setup can be found before the screenshots section.
+Simply place the downloaded jar into your server's "plugins" folder and launch the server.
+A default config will be created on the first launch and then after that feel free to make any edits you like.
+An example setup can also be found right before the screenshots section.
 
 **NOTE**: For `maxHomes` to work you must install the soft dependency below, and setup groups for the respective permissions plugin.
 
@@ -16,7 +17,9 @@ An example setup can be found before the screenshots section.
 - [LuckPerms](https://luckperms.net/download)
 
 ### Commands
-- `/create-home [name] [display_material | d | default] [description]` - Will create a home where the player is standing with the given name, material chosen, and description. 
+- `/create-home [name] [display_material | d | default] [description]` - Will create a home where the player is standing with the given name, material chosen, and description.
+- `/go-home [name]` - Will teleport the player to their home with the given name. Players will also need the sh2.teleport permission to use this command effectively.
+- `/list-homes` - Prints a listing of the players created homes. A home can be teleported to by clicking on the underlined home name (requires player to have sh2.teleport and sh2.go-home permissions).
 - `/delete-home [name]` - Will delete the home with the name provided.
 - `/add-to-blacklist [dimension names]` - This will add the specified dimension to the blacklisted table. If a dimension is present in this table, players will not be able to have save their homes in that dimension.
 - `/remove-from-blacklist [dimension names]` - This will remove the specified dimension from the blacklisted table.
@@ -29,11 +32,13 @@ If the plugin is set up to only have one group or tier, you only need to provide
 
 - `sh2.give-homes-item` - Allow player to get homes viewing/teleportation item.
 - `sh2.create-home` - Allow player to create homes.
+- `sh2.go-home` - Allow player to execute go-home command.
+- `sh2.list-homes` - Allow player to list their homes in chat window.
 - `sh2.delete-home` - Allow player to delete their own homes.
 - `sh2.teleport` - Allow player to teleport to created homes.
 - `sh2.add-to-blacklist` - Add dimensions to blacklist table.
 - `sh2.remove-from-blacklist` - Remove dimensions from blacklist table.
-- `sh2.get-blacklist-dimensions` - Retrieve a list of the blacklisted dimensions.
+- `sh2.get-blacklisted-dimensions` - Retrieve a list of the blacklisted dimensions.
 - `sh2.get-player-homes` - Retrieve a list of a given player's homes.
 - `sh2.set-max-homes` - Set the max number of homes all players, or individual groups, can have.
 
@@ -114,4 +119,5 @@ Please feel free to donate via the button below, any amount is greatly appreciat
 
 ### Changelog
 - Fixed issue where players missing sh2.teleport could not break blocks.
-- Fixed issue where a player who has a open homes gui has their inventory overwritten by the next person to open a homes gui.
+- Fixed issue where a player who has an open homes gui has their inventory overwritten by the next person to open a homes gui.
+- Added go-home and list-homes commands
