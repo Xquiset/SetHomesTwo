@@ -6,6 +6,7 @@ public enum UserInfo {
     REMOVE_FROM_BLACKLIST_USAGE("Usage: /remove-from-blacklist [dimension names]"),
     ADD_TO_BLACKLIST_USAGE("Usage: /add-to-blacklist [dimension names]"),
     CREATE_HOME_USAGE("Usage: /create-home [name] [display_material | d | default] [description]"),
+    NO_HOMES("You have not setup any homes yet, you can use the /create-home command to create one."),
     NO_MAX_HOMES("There is no max number of homes."),
     NO_BLACKLISTED_DIMENSIONS("No dimensions are blacklisted");
 

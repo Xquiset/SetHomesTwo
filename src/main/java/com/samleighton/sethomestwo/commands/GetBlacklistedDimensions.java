@@ -17,7 +17,7 @@ public class GetBlacklistedDimensions implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String[] args) {
         if (!(commandSender instanceof Player)) {
             commandSender.sendMessage(UserError.PLAYERS_ONLY.getValue());
-            return false;
+            return true;
         }
 
         Player player = (Player) commandSender;
@@ -25,14 +25,14 @@ public class GetBlacklistedDimensions implements CommandExecutor {
         // Permission guard
         if(!player.hasPermission("sh2.get-blacklisted-dimensions")){
             ChatUtils.invalidPermissions(player);
-            return false;
+            return true;
         }
 
         // Args length guard
         if (args.length > 0) {
             ChatUtils.incorrectNumArguments(player);
             ChatUtils.sendInfo(player, UserInfo.GET_BLACKLIST_USAGE.getValue());
-            return false;
+            return true;
         }
 
         Dao<String> blacklistDao = new BlacklistDao();
@@ -40,11 +40,11 @@ public class GetBlacklistedDimensions implements CommandExecutor {
 
         if (blacklistedDimensions.isEmpty()) {
             ChatUtils.sendInfo(player, UserInfo.NO_BLACKLISTED_DIMENSIONS.getValue());
-            return false;
+            return true;
         }
 
         String blacklist = "Blacklisted Dimensions: " + blacklistedDimensions;
         ChatUtils.sendInfo(player, blacklist);
-        return false;
+        return true;
     }
 }

@@ -7,7 +7,13 @@ import com.samleighton.sethomestwo.enums.UserError;
 import com.samleighton.sethomestwo.enums.UserSuccess;
 import com.samleighton.sethomestwo.utils.ChatUtils;
 import com.samleighton.sethomestwo.utils.ConfigUtil;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.ChatColor;
+import org.bukkit.Instrument;
+import org.bukkit.Note;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
@@ -63,6 +69,12 @@ public class Home implements Serializable {
         this.material = material;
     }
 
+    /**
+     * Bukkit world UUID
+     *
+     * @implNote Use UUID.fromString() to create UUID obj
+     * @return String
+     */
     public String getWorld() {
         return world;
     }
@@ -190,7 +202,7 @@ public class Home implements Serializable {
                     player.playSound(player, Sound.ENTITY_PLAYER_BIG_FALL, 5f, 5f);
                     teleportAttemptsDao.delete(player.getUniqueId());
                     player.resetTitle();
-                    player.removePotionEffect(PotionEffectType.CONFUSION);
+                    player.removePotionEffect(PotionEffectType.NAUSEA);
                     bukkitTask.cancel();
                     return;
                 }
@@ -201,7 +213,7 @@ public class Home implements Serializable {
                 String title = ConfigUtil.getConfig().getString("teleportTitle", "Please stand still");
                 String subtitle = ConfigUtil.getConfig().getString("teleportSubtitle", "You will be teleported in %d...");
                 player.sendTitle(ChatColor.GOLD + title, String.format(subtitle, seconds.get()), 0, 999, 0);
-                player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 999, 0 , true));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, 999, 0 , true));
                 player.playNote(player.getLocation(), Instrument.DIDGERIDOO, Note.sharp(2, Note.Tone.F));
                 seconds.decrementAndGet();
                 return;
@@ -212,7 +224,7 @@ public class Home implements Serializable {
             teleportAttemptsDao.delete(player.getUniqueId());
 
             player.teleport(this.asLocation());
-            player.removePotionEffect(PotionEffectType.CONFUSION);
+            player.removePotionEffect(PotionEffectType.NAUSEA);
             player.resetTitle();
             player.playNote(player.getLocation(), Instrument.BELL, Note.sharp(2, Note.Tone.F));
             player.spawnParticle(Particle.PORTAL, player.getLocation(), 100);

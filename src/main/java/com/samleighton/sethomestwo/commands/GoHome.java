@@ -1,5 +1,6 @@
 package com.samleighton.sethomestwo.commands;
 
+import com.samleighton.sethomestwo.dao.Dao;
 import com.samleighton.sethomestwo.dao.HomesDao;
 import com.samleighton.sethomestwo.enums.UserError;
 import com.samleighton.sethomestwo.models.Home;
@@ -18,7 +19,7 @@ public class GoHome implements CommandExecutor {
         // Guard for player being console command sender
         if (!(commandSender instanceof Player)) {
             commandSender.sendMessage(UserError.PLAYERS_ONLY.getValue());
-            return false;
+            return true;
         }
 
         Player player = (Player) commandSender;
@@ -26,18 +27,18 @@ public class GoHome implements CommandExecutor {
         // Args length guard
         if(args.length != 1){
             ChatUtils.incorrectNumArguments(player);
-            return false;
+            return true;
         }
 
         // Permission guard
         if(!player.hasPermission("sh2.go-home")) {
             ChatUtils.invalidPermissions(player);
-            return false;
+            return true;
         }
 
         // Get players home dao instance
         String desiredHomeName = args[0];
-        HomesDao homesDao = new HomesDao();
+        Dao<Home> homesDao = new HomesDao();
         ArrayList<Home> playerHomes = (ArrayList<Home>) homesDao.getAll(player.getUniqueId());
         Home homeToTeleportTo = null;
 
@@ -51,11 +52,11 @@ public class GoHome implements CommandExecutor {
         // Home does not exist guard
         if(homeToTeleportTo == null){
             ChatUtils.sendError(player, UserError.HOME_DOES_NOT_EXIST.getValue());
-            return false;
+            return true;
         }
 
         // Teleport player to home
         homeToTeleportTo.teleport(player);
-        return false;
+        return true;
     }
 }

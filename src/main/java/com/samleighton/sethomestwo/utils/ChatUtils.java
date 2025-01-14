@@ -30,3 +30,4 @@ public class ChatUtils {
         sendError(player, "An error was encountered while performing this actions. Please contact server administrators.");
     }
 }
+

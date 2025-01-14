@@ -31,14 +31,14 @@ public class AddDimensionToBlacklist implements CommandExecutor {
         // Permission guard
         if(!player.hasPermission("sh2.add-to-blacklist")){
             ChatUtils.invalidPermissions(player);
-            return false;
+            return true;
         }
 
         // Args length guard
         if (args.length < 1) {
             ChatUtils.incorrectNumArguments(player);
             ChatUtils.sendInfo(player, UserInfo.ADD_TO_BLACKLIST_USAGE.getValue());
-            return false;
+            return true;
         }
 
         Dao<String> blacklistDao = new BlacklistDao();
@@ -64,6 +64,6 @@ public class AddDimensionToBlacklist implements CommandExecutor {
             ChatUtils.sendSuccess(player, String.format(UserSuccess.DIMENSION_ADDED_TO_BLACKLIST.getValue(), dimension));
         }
 
-        return false;
+        return true;
     }
 }
