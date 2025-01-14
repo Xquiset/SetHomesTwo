@@ -15,7 +15,7 @@ public class GiveHomesItem implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String[] strings) {
         if (!(commandSender instanceof Player)) {
             commandSender.sendMessage(UserError.PLAYERS_ONLY.getValue());
-            return false;
+            return true;
         }
 
         // Retrieve the player from the command
@@ -25,13 +25,13 @@ public class GiveHomesItem implements CommandExecutor {
         // Permission guard
         if(!player.hasPermission("sh2.give-homes-item")){
             ChatUtils.invalidPermissions(player);
-            return false;
+            return true;
         }
 
         // Create the compass homes item.
         HomeItem homeItem = new HomeItem(player);
         playerInv.addItem(homeItem);
 
-        return false;
+        return true;
     }
 }

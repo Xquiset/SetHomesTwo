@@ -33,7 +33,7 @@ public class GetPlayerHomes implements CommandExecutor {
         // Player instance guard
         if (!(commandSender instanceof Player)) {
             commandSender.sendMessage(UserError.PLAYERS_ONLY.getValue());
-            return false;
+            return true;
         }
 
         Player requester = (Player) commandSender;
@@ -41,14 +41,14 @@ public class GetPlayerHomes implements CommandExecutor {
         // Permission guard
         if(!requester.hasPermission("sh2.get-player-homes")){
             ChatUtils.invalidPermissions(requester);
-            return false;
+            return true;
         }
 
         // Args length guard
         if (args.length != 1) {
             ChatUtils.incorrectNumArguments(requester);
             ChatUtils.sendError(requester, UserInfo.GET_PLAYER_HOMES_USAGE.getValue());
-            return false;
+            return true;
         }
 
         String uuidString = ServerUtil.getPlayerUUID(args[0]);
@@ -56,14 +56,14 @@ public class GetPlayerHomes implements CommandExecutor {
         // Add a check for if player is online/exists
         if (uuidString == null) {
             ChatUtils.sendError(requester, UserError.PLAYER_NOT_ONLINE.getValue());
-            return false;
+            return true;
         }
 
         Dao<Home> homesDao = new HomesDao(true);
         List<Home> playersHomes = homesDao.getAll(UUID.fromString(uuidString));
 
         Player player = Bukkit.getPlayer(UUID.fromString(uuidString));
-        if(player == null) return false;
+        if(player == null) return true;
 
         HomesGui homesGui = new HomesGui(requester, "Homes of " + player.getDisplayName());
         homesGui.showHomes(playersHomes, requester);
@@ -73,6 +73,6 @@ public class GetPlayerHomes implements CommandExecutor {
         if (ConfigUtil.getDebugLevel().equals(DebugLevel.INFO))
             Bukkit.getLogger().info(String.format("%s is viewing homes of player %s", requester.getDisplayName(), player.getDisplayName()));
 
-        return false;
+        return true;
     }
 }

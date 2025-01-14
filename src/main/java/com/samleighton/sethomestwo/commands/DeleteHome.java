@@ -19,7 +19,7 @@ public class DeleteHome implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String[] args) {
         if (!(commandSender instanceof Player)) {
             commandSender.sendMessage(UserError.PLAYERS_ONLY.getValue());
-            return false;
+            return true;
         }
 
         Player player = (Player) commandSender;
@@ -27,14 +27,14 @@ public class DeleteHome implements CommandExecutor {
         // Permission guard
         if(!player.hasPermission("sh2.delete-home")){
             ChatUtils.invalidPermissions(player);
-            return false;
+            return true;
         }
 
         // Args length guard
         if (args.length != 1) {
             ChatUtils.incorrectNumArguments(player);
             ChatUtils.sendInfo(player, UserError.DELETE_HOME_USAGE.getValue());
-            return false;
+            return true;
         }
 
         String homeName = args[0];
@@ -44,7 +44,7 @@ public class DeleteHome implements CommandExecutor {
         // Home does not exist guard
         if(home == null){
             ChatUtils.sendError(player, String.format("You do not have a home by the name %s", homeName));
-            return false;
+            return true;
         }
 
         boolean success = homesDao.delete(home);
@@ -53,11 +53,11 @@ public class DeleteHome implements CommandExecutor {
         if (!success) {
             Bukkit.getLogger().info("An error was encountered while attempting to delete a home from the database.");
             ChatUtils.pluginError(player);
-            return false;
+            return true;
         }
 
         String successMessage = ConfigUtil.getConfig().getString("homeDeleted", UserSuccess.HOME_DELETED.getValue());
         ChatUtils.sendSuccess(player, String.format(successMessage, homeName));
-        return false;
+        return true;
     }
 }

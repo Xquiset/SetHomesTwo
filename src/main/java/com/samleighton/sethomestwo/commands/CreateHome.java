@@ -33,7 +33,7 @@ public class CreateHome implements CommandExecutor {
         // Ensure command executor is a player
         if (!(commandSender instanceof Player)) {
             commandSender.sendMessage(UserError.PLAYERS_ONLY.getValue());
-            return false;
+            return true;
         }
 
         Player player = (Player) commandSender;
@@ -43,21 +43,21 @@ public class CreateHome implements CommandExecutor {
         // Permission guard
         if(!player.hasPermission("sh2.create-home")){
             ChatUtils.invalidPermissions(player);
-            return false;
+            return true;
         }
 
         // Guard to ensure we have minimum number of args
         if (args.length < 1) {
             ChatUtils.incorrectNumArguments(player);
             ChatUtils.sendInfo(player, UserInfo.CREATE_HOME_USAGE.getValue());
-            return false;
+            return true;
         }
 
         // Guard to check if player has exceeded the max number of homes
-        if (isMaxHomesReached(player, homesDao)){
+        if (this.maxHomesReached(player, homesDao)){
             String errorMessage = ConfigUtil.getConfig().getString("maxHomesReached", UserError.MAX_HOMES.getValue());
             ChatUtils.sendError(player, errorMessage);
-            return false;
+            return true;
         }
 
         // Grab list of blacklisted dimensions, dimension player is in, and dimensions map
@@ -70,7 +70,7 @@ public class CreateHome implements CommandExecutor {
         if (blacklistedDimensions.contains(dimensionsMap.get(playerDimension))) {
             String errorMessage = ConfigUtil.getConfig().getString("dimensionBlacklisted", UserError.DIMENSION_IS_BLACKLISTED.getValue());
             ChatUtils.sendError(player, errorMessage);
-            return false;
+            return true;
         }
 
         // Extract parameters from command arguments
@@ -86,12 +86,12 @@ public class CreateHome implements CommandExecutor {
         if (mat == null) {
             String errorMessage = ConfigUtil.getConfig().getString("invalidHomeItem", UserError.INVALID_MATERIAL.getValue());
             ChatUtils.sendError(player, errorMessage);
-            return false;
+            return true;
         }
         if (!mat.isItem()) {
             String errorMessage = ConfigUtil.getConfig().getString("invalidHomeItem", UserError.INVALID_MATERIAL.getValue());
             ChatUtils.sendError(player, errorMessage);
-            return false;
+            return true;
         }
 
         material = mat.name();
@@ -126,15 +126,15 @@ public class CreateHome implements CommandExecutor {
         if (!created) {
             Bukkit.getLogger().severe(String.format("Failed to create home for player %s in the database.", player.getUniqueId()));
             ChatUtils.sendError(player, "There was an issue creating your home.");
-            return false;
+            return true;
         }
 
         String message = ConfigUtil.getConfig().getString("homeCreated", UserSuccess.HOME_CREATED.getValue());
         ChatUtils.sendSuccess(player, String.format(message, homeName));
-        return false;
+        return true;
     }
 
-    public boolean isMaxHomesReached(Player player, Dao<Home> homesDao){
+    private boolean maxHomesReached(Player player, Dao<Home> homesDao){
         boolean isMaxHomesEnabled = ConfigUtil.getConfig().getBoolean("maxHomeEnabled", false);
         if (!isMaxHomesEnabled) return false;
 
