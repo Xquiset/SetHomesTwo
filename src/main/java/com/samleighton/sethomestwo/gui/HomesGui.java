@@ -7,6 +7,7 @@ import com.samleighton.sethomestwo.models.Home;
 import com.samleighton.sethomestwo.utils.ChatUtils;
 import com.samleighton.sethomestwo.utils.ConfigUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -19,38 +20,114 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class HomesGui implements Listener {
     private final Inventory inv;
+    private final int inventoryWidth = 9;
+    private final int inventoryHeight = 6;
+    private final int inventorySize = inventoryWidth * inventoryHeight;
+
+    private final Map<Integer, List<Home>> pagesMap = new HashMap<>();
+    private int currentPage = 0;
+    private int maxPages = 1;
+
+    private final String defaultBackPageMaterial = "red_stained_glass_pane";
+    private final String defaultNextPageMaterial = "green_stained_glass_pane";
 
     public HomesGui(Player player) {
         String title = ConfigUtil.getConfig().getString("inventoryTitle", "Your homes");
-        inv = Bukkit.createInventory(player, 54, title);
+
+        // Create a 6x9 double chest inventory
+        inv = Bukkit.createInventory(player, inventorySize, title);
     }
 
-    public HomesGui(Player player, String title){
-        inv = Bukkit.createInventory(player, 54, title);
+    public HomesGui(Player player, String title) {
+        inv = Bukkit.createInventory(player, inventorySize, title);
+    }
+
+    // Ingest players homes into a hash map of home lists for pagination
+    public void setHomes(List<Home> homes) {
+        // Clear any preexisting homes
+        pagesMap.clear();
+
+        // Determine slots available
+        int inventorySlotsAvailable = inventorySize - inventoryWidth;
+
+        this.currentPage = 0;
+        this.maxPages = (homes.size() / inventorySlotsAvailable) + 1;
+
+        for (int i = 0; i < this.maxPages; i++) {
+            pagesMap.put(i, new ArrayList<>());
+        }
+
+        int pageToBuild = 0;
+        int slotIndex = 0;
+        for (Home home : homes) {
+            // Add home to current page being built
+            pagesMap.get(pageToBuild).add(home);
+
+            // Increment page and reset slot index if
+            // index has reached last slot available.
+            if (slotIndex == inventorySlotsAvailable) {
+                slotIndex = 0;
+                pageToBuild++;
+                continue;
+            }
+
+            // Increment slot index
+            slotIndex++;
+        }
     }
 
     /**
      * Draws the blocks for each home in the inventory.
      */
-    public void showHomes(@NotNull List<Home> homes, Player player) {
+    public void displayInventory(Player player) {
         inv.clear();
 
-        if (homes.isEmpty()) {
+        // Get homes for current page
+        List<Home> homesForDisplay = pagesMap.get(this.currentPage);
+
+        if (homesForDisplay.isEmpty()) {
             String noHomesError = ConfigUtil.getConfig().getString("noHomes", UserError.NO_HOMES.getValue());
             ChatUtils.sendError(player, noHomesError);
             return;
         }
 
-        for (Home home : homes) {
-            String materialName = home.getMaterial();
-            Material material = Material.matchMaterial(materialName);
-            inv.addItem(createGuiItem(material, home));
+        // Draw home items in inventory
+        for (Home home : homesForDisplay) {
+            inv.addItem(createGuiItem(Material.matchMaterial(home.getMaterial()), home));
+        }
+
+        // Open inventory without page items
+        if (!(maxPages > 1)) {
+            player.openInventory(inv);
+            return;
+        }
+
+        // Build previous page item
+        Material backPageMaterial = Material.matchMaterial(ConfigUtil.getConfig().getString("previousPageItem", defaultBackPageMaterial));
+        ItemStack prevPageItem = new ItemStack(Objects.requireNonNull(backPageMaterial), 1);
+        ItemMeta prevPageItemMeta = prevPageItem.getItemMeta();
+        Objects.requireNonNull(prevPageItemMeta).setDisplayName(ChatColor.DARK_RED + "Previous Page");
+        prevPageItem.setItemMeta(prevPageItemMeta);
+
+        // Build next page item
+        Material nextPageMaterial = Material.matchMaterial(ConfigUtil.getConfig().getString("nextPageItem", defaultNextPageMaterial));
+        ItemStack nextPageItem = new ItemStack(Objects.requireNonNull(nextPageMaterial), 1);
+        ItemMeta nextPageItemMeta = nextPageItem.getItemMeta();
+        Objects.requireNonNull(nextPageItemMeta).setDisplayName(ChatColor.DARK_GREEN + "Next Page");
+        nextPageItem.setItemMeta(nextPageItemMeta);
+
+        // Set prev page to bottom left of inventory.
+        if (currentPage != 0) {
+            inv.setItem(inventorySize - inventoryWidth, prevPageItem);
+        }
+
+        // Set next page to bottom right of inventory
+        if (currentPage != maxPages - 1) {
+            inv.setItem(inventorySize - 1, nextPageItem);
         }
 
         player.openInventory(inv);
@@ -69,7 +146,7 @@ public class HomesGui implements Listener {
 
         // Setup item lore and display name
         Objects.requireNonNull(meta).setDisplayName(home.getName());
-        if(home.getDescription() != null)
+        if (home.getDescription() != null)
             Objects.requireNonNull(meta).setLore(Collections.singletonList(home.getDescription()));
 
         // Persist the home to the item
@@ -97,7 +174,24 @@ public class HomesGui implements Listener {
         if (clickedItem == null || clickedItem.getType().isAir() || clickedItem.getItemMeta() == null) return;
 
         // Guard to check if item is actually home destination
-        if (!clickedItem.getItemMeta().getPersistentDataContainer().has(homeKey, new PersistentHome())) return;
+        if (!clickedItem.getItemMeta().getPersistentDataContainer().has(homeKey, new PersistentHome())) {
+            Material backPageMaterial = Material.matchMaterial(ConfigUtil.getConfig().getString("previousPageItem", defaultBackPageMaterial));
+            Material nextPageMaterial = Material.matchMaterial(ConfigUtil.getConfig().getString("nextPageItem", defaultNextPageMaterial));
+
+            // Guard to check if item is pagination material
+            if (!(clickedItem.getType().equals(backPageMaterial) || clickedItem.getType().equals(nextPageMaterial)))
+                return;
+
+            // Move to next page
+            if (clickedItem.getType().equals(backPageMaterial)) currentPage--;
+
+            // Move to prev page
+            if (clickedItem.getType().equals(nextPageMaterial)) currentPage++;
+
+            // Display new inv state to player
+            this.displayInventory((Player) event.getWhoClicked());
+            return;
+        }
 
         ItemMeta clickedItemMeta = clickedItem.getItemMeta();
 
@@ -105,7 +199,7 @@ public class HomesGui implements Listener {
         Home home = clickedItemMeta.getPersistentDataContainer().get(homeKey, new PersistentHome());
 
         // The home object was not retrievable via item meta
-        if(home == null) return;
+        if (home == null) return;
 
         // Get the player who clicked the item.
         Player player = (Player) event.getWhoClicked();
@@ -113,6 +207,10 @@ public class HomesGui implements Listener {
 
         // Teleport player to home
         home.teleport(player);
+
+        // Reset page
+        this.currentPage = 1;
+        this.pagesMap.clear();
     }
 
     // Cancel inventory dragging
