@@ -8,6 +8,14 @@ openHomeItem: "compass"
 # provided with the default material name.
 defaultHomeItem: "white_wool"
 
+# The item to use for moving to the next page
+# in the home inventory.
+previousPageItem: "red_stained_glass_pane"
+
+# The item to use for moving to the next page
+# in the home inventory.
+nextPageItem: "green_stained_glass_pane"
+
 # The title of the inventory displaying the
 # players home list.
 inventoryTitle: "Your homes"

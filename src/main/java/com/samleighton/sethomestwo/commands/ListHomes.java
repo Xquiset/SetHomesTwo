@@ -89,7 +89,7 @@ public class ListHomes implements CommandExecutor {
             mainMessage.addExtra(separator);
 
             // Add on description to main message if provided
-            if (!home.getDescription().isEmpty()) {
+            if (home.getDescription() != null && !home.getDescription().isEmpty()) {
                 TextComponent homeDescription = new TextComponent("Desc: ");
                 homeDescription.setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
 

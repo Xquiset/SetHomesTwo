@@ -25,7 +25,7 @@ public class GetPlayerHomes implements CommandExecutor {
 
     private final SetHomesTwo plugin;
 
-    public GetPlayerHomes(SetHomesTwo plugin){
+    public GetPlayerHomes(SetHomesTwo plugin) {
         this.plugin = plugin;
     }
 
@@ -39,7 +39,7 @@ public class GetPlayerHomes implements CommandExecutor {
         Player requester = (Player) commandSender;
 
         // Permission guard
-        if(!requester.hasPermission("sh2.get-player-homes")){
+        if (!requester.hasPermission("sh2.get-player-homes")) {
             ChatUtils.invalidPermissions(requester);
             return true;
         }
@@ -63,10 +63,11 @@ public class GetPlayerHomes implements CommandExecutor {
         List<Home> playersHomes = homesDao.getAll(UUID.fromString(uuidString));
 
         Player player = Bukkit.getPlayer(UUID.fromString(uuidString));
-        if(player == null) return true;
+        if (player == null) return true;
 
         HomesGui homesGui = new HomesGui(requester, "Homes of " + player.getDisplayName());
-        homesGui.showHomes(playersHomes, requester);
+        homesGui.setHomes(playersHomes);
+        homesGui.displayInventory(requester);
 
         plugin.getServer().getPluginManager().registerEvents(homesGui, plugin);
 
