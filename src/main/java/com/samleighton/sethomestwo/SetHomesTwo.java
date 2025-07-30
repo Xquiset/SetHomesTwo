@@ -2,12 +2,14 @@ package com.samleighton.sethomestwo;
 
 import com.samleighton.sethomestwo.commands.*;
 import com.samleighton.sethomestwo.connections.ConnectionManager;
+import com.samleighton.sethomestwo.dao.TeleportAttemptsDao;
 import com.samleighton.sethomestwo.enums.DebugLevel;
 import com.samleighton.sethomestwo.events.PlayerJoin;
 import com.samleighton.sethomestwo.events.PlayerLeave;
 import com.samleighton.sethomestwo.events.PlayerMoveWhileTeleporting;
 import com.samleighton.sethomestwo.events.RightClickHomeItem;
 import com.samleighton.sethomestwo.gui.HomesGui;
+import com.samleighton.sethomestwo.models.TeleportAttempt;
 import com.samleighton.sethomestwo.tabcompleters.DimensionTabCompleter;
 import com.samleighton.sethomestwo.tabcompleters.HomesTabCompleter;
 import com.samleighton.sethomestwo.tabcompleters.MaterialsTabCompleter;
@@ -18,6 +20,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +48,7 @@ public class SetHomesTwo extends JavaPlugin {
         registerEventListeners();
 
         // Load online players into gui map just in case this was a reload
-        for(Player player : Bukkit.getOnlinePlayers()){
+        for (Player player : Bukkit.getOnlinePlayers()) {
             homesGuiMap.put(player.getUniqueId(), new HomesGui(player));
         }
 
@@ -66,6 +69,21 @@ public class SetHomesTwo extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        // Clear teleport attempts for all players
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            // Attempt to find a teleport attempt for the player
+            TeleportAttemptsDao tad = new TeleportAttemptsDao();
+            TeleportAttempt currAttempt = tad.get(player);
+
+            // Skip if no teleport attempt was found
+            if (currAttempt == null) continue;
+
+            // If the player has a teleport attempt, clear it
+            tad.delete(player.getUniqueId());
+            player.resetTitle();
+            player.removePotionEffect(PotionEffectType.NAUSEA);
+        }
+
         // Close database connections
         connectionManager.closeConnections();
 

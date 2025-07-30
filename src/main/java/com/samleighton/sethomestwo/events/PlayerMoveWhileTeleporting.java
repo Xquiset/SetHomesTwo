@@ -16,8 +16,8 @@ public class PlayerMoveWhileTeleporting implements Listener {
         // Skip cancel on move check
         if (!ConfigUtil.getConfig().getBoolean("cancelOnMove", true)) return;
 
-        Dao<TeleportAttempt> teleportAttemptsDaoDao = new TeleportAttemptsDao();
-        TeleportAttempt ta = teleportAttemptsDaoDao.get(event.getPlayer());
+        Dao<TeleportAttempt> tad = new TeleportAttemptsDao();
+        TeleportAttempt ta = tad.get(event.getPlayer());
 
         // Guard to check if player has attempted a teleport
         if (ta == null) return;
